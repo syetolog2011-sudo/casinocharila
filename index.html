@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NFT Case Opener + Inventory</title>
+    <title>NFT Casino</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -13,6 +13,7 @@
             --epic: #f1c40f;
             --rare: #3498db;
             --common: #95a5a6;
+            --nav-bg: #111;
         }
 
         body {
@@ -20,157 +21,140 @@
             color: white;
             font-family: -apple-system, system-ui, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        .header { text-align: center; margin-bottom: 25px; }
-        .balance { color: var(--accent); font-weight: bold; font-size: 20px; }
+        /* Верхняя панель со звездами */
+        .top-bar {
+            padding: 15px;
+            text-align: center;
+            background: rgba(255,255,255,0.05);
+            border-bottom: 1px solid #222;
+        }
+        .stars-display { color: var(--epic); font-weight: bold; font-size: 22px; }
+
+        /* Контент вкладок */
+        .content { flex: 1; overflow-y: auto; padding: 20px; display: none; }
+        .content.active { display: block; }
 
         /* Рулетка */
+        .roulette-container { text-align: center; margin-top: 40px; }
         .roulette-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
-            height: 160px;
-            background: #0f0f11;
-            border: 2px solid #222;
-            border-radius: 24px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
+            position: relative; width: 100%; height: 160px;
+            background: #0f0f11; border: 2px solid #222;
+            border-radius: 24px; overflow: hidden; display: flex; align-items: center;
         }
-
         .center-line {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 3px;
-            height: 100%;
-            background: #fff;
-            z-index: 10;
-            box-shadow: 0 0 15px #fff;
+            position: absolute; left: 50%; transform: translateX(-50%);
+            width: 3px; height: 100%; background: #fff; z-index: 10;
         }
-
-        .tape {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 0 10px;
-            transition: transform 5s cubic-bezier(0.15, 0, 0.05, 1);
-        }
-
-        .nft-card {
-            min-width: 125px;
-            height: 125px;
-            background: var(--card-bg);
-            border-radius: 20px;
-            overflow: hidden;
-            border-bottom: 5px solid #333;
-            flex-shrink: 0;
-        }
-
+        .tape { display: flex; align-items: center; gap: 12px; padding: 0 10px; transition: transform 5s cubic-bezier(0.15, 0, 0.05, 1); }
+        .nft-card { min-width: 125px; height: 125px; background: var(--card-bg); border-radius: 20px; overflow: hidden; border-bottom: 5px solid #333; flex-shrink: 0; }
         .nft-card img { width: 100%; height: 100%; object-fit: cover; }
-        .nft-card.epic { border-color: var(--epic); }
-        .nft-card.rare { border-color: var(--rare); }
-        .nft-card.common { border-color: var(--common); }
 
-        /* Модальное окно (Выпадение) */
+        /* Профиль и инвентарь */
+        .profile-header { text-align: center; margin-bottom: 20px; }
+        .inventory-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .inv-item { background: #1a1a1c; border-radius: 15px; padding: 10px; text-align: center; border-bottom: 3px solid #333; }
+        .inv-item img { width: 100%; aspect-ratio: 1/1; border-radius: 10px; object-fit: cover; }
+        .inv-btns { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; }
+        .inv-btns button { font-size: 10px; padding: 5px; border-radius: 5px; border: none; cursor: pointer; }
+
+        /* Нижнее меню */
+        .nav-bar {
+            height: 70px; background: var(--nav-bg);
+            display: flex; justify-content: space-around; align-items: center;
+            border-top: 1px solid #222;
+        }
+        .nav-item { color: #666; text-decoration: none; font-size: 12px; text-align: center; cursor: pointer; }
+        .nav-item.active { color: var(--accent); }
+
+        /* Кнопки и модалка */
+        .btn-main { width: 100%; padding: 20px; background: #fff; color: #000; border-radius: 20px; font-weight: 900; border: none; margin-top: 30px; }
         #winModal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 100;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.3s;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); z-index: 100; flex-direction: column; align-items: center; justify-content: center;
         }
-
-        .win-content {
-            background: #1a1a1c;
-            padding: 30px;
-            border-radius: 30px;
-            text-align: center;
-            border: 2px solid #333;
-            max-width: 280px;
-        }
-
-        .win-img { width: 200px; height: 200px; border-radius: 20px; object-fit: cover; margin-bottom: 15px; border: 4px solid #fff; }
-
-        /* Кнопки */
-        .btn {
-            width: 100%; max-width: 400px; padding: 20px;
-            background: #fff; color: #000; border: none;
-            border-radius: 20px; font-weight: 900; margin-top: 20px; cursor: pointer;
-        }
-        .btn-sell { background: #e74c3c; color: white; margin-top: 10px; }
-        .btn-collect { background: #2ecc71; color: white; }
-
-        /* Инвентарь */
-        .inventory-section { width: 100%; max-width: 500px; margin-top: 40px; }
-        .inventory-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .inv-item { width: 100%; aspect-ratio: 1/1; background: #1a1a1c; border-radius: 12px; overflow: hidden; border-bottom: 3px solid #333; }
-        .inv-item img { width: 100%; height: 100%; object-fit: cover; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .win-box { background: #1a1a1c; padding: 25px; border-radius: 25px; text-align: center; max-width: 260px; border: 2px solid #333; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2>КЕЙС «FROZEN» ❄️</h2>
-        <div class="balance">БАЛАНС: <span id="coins">1000</span> ⭐</div>
+    <div class="top-bar">
+        <div class="stars-display">⭐ <span id="starCount">1000</span></div>
     </div>
 
-    <div class="roulette-wrapper">
-        <div class="center-line"></div>
-        <div class="tape" id="tape"></div>
+    <div id="tab-roulette" class="content active">
+        <div class="roulette-container">
+            <h3>КЕЙС «FROZEN» ❄️</h3>
+            <div class="roulette-wrapper">
+                <div class="center-line"></div>
+                <div id="tape" class="tape"></div>
+            </div>
+            <button class="btn-main" id="spinBtn" onclick="startSpin()">ОТКРЫТЬ (100 ⭐)</button>
+        </div>
     </div>
 
-    <button class="btn" id="spinBtn" onclick="startSpin()">ОТКРЫТЬ (100 ⭐)</button>
-
-    <div class="inventory-section">
-        <h3>МОЙ ИНВЕНТАРЬ</h3>
-        <div id="inventory" class="inventory-grid"></div>
+    <div id="tab-profile" class="content">
+        <div class="profile-header">
+            <h3>МОЙ ИНВЕНТАРЬ 🎒</h3>
+        </div>
+        <div id="inventory" class="inventory-grid">
+            </div>
     </div>
 
     <div id="winModal">
-        <div class="win-content" id="winContent">
-            </div>
+        <div class="win-box" id="winContent"></div>
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="switchTab('roulette', this)">
+            <div style="font-size: 24px;">🎰</div>
+            <div>Рулетка</div>
+        </div>
+        <div class="nav-item" onclick="switchTab('profile', this)">
+            <div style="font-size: 24px;">👤</div>
+            <div>Профиль</div>
+        </div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        const tape = document.getElementById('tape');
-        const inventoryEl = document.getElementById('inventory');
-        let balance = 1000;
-        let userInventory = [];
+        let stars = 1000;
+        let inventory = [];
 
-        const prices = { 'common': 20, 'rare': 125, 'epic': 525 };
-
-        const items = [
-            { img: 'https://raw.githubusercontent.com/syetolog2011-sudo/casinocharila/main/photo_5296748618452769416_m.jpg', rarity: 'epic' },
-            { img: 'https://raw.githubusercontent.com/syetolog2011-sudo/casinocharila/main/photo_5296748618452769469_m (1).jpg', rarity: 'rare' },
-            { img: 'https://raw.githubusercontent.com/syetolog2011-sudo/casinocharila/main/photo_5296748618452769466_m.jpg', rarity: 'common' }
+        const itemsConfig = [
+            { id: 1, name: 'Common Item', img: 'https://raw.githubusercontent.com/syetolog2011-sudo/casinocharila/main/photo_5296748618452769466_m.jpg', rarity: 'common', price: 20, chance: 50 },
+            { id: 2, name: 'Rare Item', img: 'https://raw.githubusercontent.com/syetolog2011-sudo/casinocharila/main/photo_5296748618452769469_m (1).jpg', rarity: 'rare', price: 125, chance: 35 },
+            { id: 3, name: 'Epic Item', img: 'https://raw.githubusercontent.com/syetolog2011-sudo/casinocharila/main/photo_5296748618452769416_m.jpg', rarity: 'epic', price: 525, chance: 15 }
         ];
 
+        function switchTab(tabName, el) {
+            document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            el.classList.add('active');
+            if(tabName === 'profile') renderInventory();
+        }
+
+        function getRandomItem() {
+            const rand = Math.random() * 100;
+            if (rand < 50) return itemsConfig[0];      // 50%
+            if (rand < 85) return itemsConfig[1];      // 35% (50 + 35)
+            return itemsConfig[2];                     // 15%
+        }
+
         function buildTape() {
+            const tape = document.getElementById('tape');
             tape.innerHTML = '';
             for (let i = 0; i < 80; i++) {
-                const item = items[Math.floor(Math.random() * items.length)];
+                const item = getRandomItem();
                 const card = document.createElement('div');
                 card.className = `nft-card ${item.rarity}`;
                 card.innerHTML = `<img src="${item.img}">`;
@@ -179,32 +163,26 @@
         }
 
         function startSpin() {
-            if (balance < 100) return alert("Недостаточно звезд!");
-            
-            balance -= 100;
-            updateUI();
+            if (stars < 100) return alert("Мало звезд!");
+            stars -= 100;
+            updateStars();
             
             const btn = document.getElementById('spinBtn');
             btn.disabled = true;
 
-            const cardWidth = 137;
-            const winIndex = 60; 
-            // Случайно выбираем, какой предмет выиграет
-            const winningItem = items[Math.floor(Math.random() * items.length)];
-            
-            // Подменяем 60-ю карточку на выигрышную
-            const cards = tape.querySelectorAll('.nft-card');
+            const winIndex = 60;
+            const winningItem = getRandomItem();
+            const cards = document.getElementById('tape').querySelectorAll('.nft-card');
             cards[winIndex].className = `nft-card ${winningItem.rarity}`;
             cards[winIndex].innerHTML = `<img src="${winningItem.img}">`;
 
-            const offset = (winIndex * cardWidth) - (tape.parentElement.offsetWidth / 2) + (cardWidth / 2);
-
-            tape.style.transition = 'none';
-            tape.style.transform = 'translateX(0)';
+            const offset = (winIndex * 137) - (document.querySelector('.roulette-wrapper').offsetWidth / 2) + 68;
+            document.getElementById('tape').style.transition = 'none';
+            document.getElementById('tape').style.transform = 'translateX(0)';
             
             setTimeout(() => {
-                tape.style.transition = 'transform 5s cubic-bezier(0.15, 0, 0.05, 1)';
-                tape.style.transform = `translateX(-${offset}px)`;
+                document.getElementById('tape').style.transition = 'transform 5s cubic-bezier(0.15, 0, 0.05, 1)';
+                document.getElementById('tape').style.transform = `translateX(-${offset}px)`;
             }, 50);
 
             setTimeout(() => showWinModal(winningItem), 5500);
@@ -212,51 +190,47 @@
 
         function showWinModal(item) {
             const modal = document.getElementById('winModal');
-            const content = document.getElementById('winContent');
-            const price = prices[item.rarity];
-
-            content.innerHTML = `
+            document.getElementById('winContent').innerHTML = `
                 <h2 style="color:var(--${item.rarity})">${item.rarity.toUpperCase()}</h2>
-                <img src="${item.img}" class="win-img" style="border-color:var(--${item.rarity})">
-                <p>Цена продажи: ${price} ⭐</p>
-                <button class="btn btn-collect" onclick="collectItem('${item.img}', '${item.rarity}')">В ИНВЕНТАРЬ</button>
-                <button class="btn btn-sell" onclick="sellItem(${price})">ПРОДАТЬ ЗА ${price} ⭐</button>
+                <img src="${item.img}" style="width:100%; border-radius:15px; margin:10px 0;">
+                <button class="btn-main" style="background:#2ecc71; color:#fff" onclick="toInventory(${JSON.stringify(item).replace(/"/g, '&quot;')})">В ПРОФИЛЬ</button>
             `;
             modal.style.display = 'flex';
         }
 
-        function collectItem(img, rarity) {
-            userInventory.push({ img, rarity });
-            closeModal();
-            renderInventory();
-        }
-
-        function sellItem(price) {
-            balance += price;
-            updateUI();
-            closeModal();
-        }
-
-        function closeModal() {
+        function toInventory(item) {
+            inventory.push(item);
             document.getElementById('winModal').style.display = 'none';
             document.getElementById('spinBtn').disabled = false;
             buildTape();
         }
 
-        function updateUI() {
-            document.getElementById('coins').innerText = balance;
-        }
-
         function renderInventory() {
-            inventoryEl.innerHTML = '';
-            userInventory.forEach(item => {
+            const invGrid = document.getElementById('inventory');
+            invGrid.innerHTML = inventory.length === 0 ? '<p style="grid-column: 1/4; opacity:0.5">Тут пока пусто...</p>' : '';
+            inventory.forEach((item, index) => {
                 const div = document.createElement('div');
-                div.className = `inv-item`;
+                div.className = 'inv-item';
                 div.style.borderColor = `var(--${item.rarity})`;
-                div.innerHTML = `<img src="${item.img}">`;
-                inventoryEl.appendChild(div);
+                div.innerHTML = `
+                    <img src="${item.img}">
+                    <div class="inv-btns">
+                        <button style="background:#e74c3c; color:white" onclick="sellItem(${index})">ПРОДАТЬ (${item.price} ⭐)</button>
+                        <button style="background:#47a1ff; color:white" onclick="alert('Вывод в обработке...')">ВЫВЕСТИ</button>
+                    </div>
+                `;
+                invGrid.appendChild(div);
             });
         }
+
+        function sellItem(index) {
+            stars += inventory[index].price;
+            inventory.splice(index, 1);
+            updateStars();
+            renderInventory();
+        }
+
+        function updateStars() { document.getElementById('starCount').innerText = stars; }
 
         buildTape();
     </script>
