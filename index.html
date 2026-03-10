@@ -12,30 +12,28 @@
             --accent: #47a1ff;
             --epic: #f1c40f;
             --rare: #3498db;
-            --common: #95a5a6;
         }
 
         body {
             background: var(--bg);
             color: white;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, system-ui, sans-serif;
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        .header { text-align: center; margin-bottom: 30px; }
-        .balance { color: var(--accent); font-weight: bold; font-size: 18px; margin-top: 5px; }
+        .balance { color: var(--accent); font-weight: bold; font-size: 18px; margin-bottom: 20px; }
 
         /* Контейнер рулетки */
         .roulette-box {
             position: relative;
             width: 100%;
-            max-width: 500px;
-            height: 160px;
+            max-width: 450px;
+            height: 140px;
             background: #0f0f11;
             border: 2px solid #222;
             border-radius: 24px;
@@ -45,12 +43,87 @@
             box-shadow: inset 0 0 40px #000;
         }
 
-        /* Затемнение по бокам (Виньетка) */
+        /* Виньетка по бокам */
         .roulette-box::before, .roulette-box::after {
             content: "";
             position: absolute;
             top: 0;
-            width: 80px;
+            width: 60px;
             height: 100%;
             z-index: 5;
             pointer-events: none;
+        }
+        .roulette-box::before { left: 0; background: linear-gradient(to right, var(--bg), transparent); }
+        .roulette-box::after { right: 0; background: linear-gradient(to left, var(--bg), transparent); }
+
+        .pointer {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 100%;
+            background: #fff;
+            z-index: 10;
+            box-shadow: 0 0 15px #fff;
+        }
+
+        .tape {
+            display: flex;
+            gap: 10px;
+            padding: 0 10px;
+            transition: transform 5s cubic-bezier(0.15, 0, 0.05, 1);
+        }
+
+        .nft-card {
+            min-width: 110px;
+            height: 110px;
+            background: var(--card-bg);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 4px solid #333;
+            flex-shrink: 0;
+        }
+
+        .nft-card img { width: 75px; height: 75px; object-fit: contain; }
+        .nft-card.epic { border-color: var(--epic); background: radial-gradient(circle, #2c250a 0%, #1a1a1c 100%); }
+        .nft-card.rare { border-color: var(--rare); background: radial-gradient(circle, #0a1b2c 0%, #1a1a1c 100%); }
+
+        .btn {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 18px;
+            margin-top: 40px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <h2 style="letter-spacing: 2px;">КЕЙС «FROZEN» ❄️</h2>
+    <div class="balance">БАЛАНС: <span id="coins">100</span> 💎</div>
+
+    <div class="roulette-box">
+        <div class="pointer"></div>
+        <div class="tape" id="tape"></div>
+    </div>
+
+    <button class="btn" onclick="startSpin()">ОТКРЫТЬ КЕЙС</button>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const tape = document.getElementById('tape');
+        const items = [
+            { img: 'https://cdn-icons-png.flaticon.com/512/9420/9420917.png', rarity: 'epic' },
+            { img: 'https://cdn-icons-png.flaticon.com/512/2912/2912761.png', rarity: 'rare' },
+            { img: 'https://cdn-
