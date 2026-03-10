@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NFT Casino Upgrade</title>
+    <title>NFT Upgrade Pro</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -19,69 +19,62 @@
         body {
             background: var(--bg); color: white;
             font-family: -apple-system, system-ui, sans-serif;
-            margin: 0; padding: 0; display: flex; flex-direction: column;
-            height: 100vh; overflow: hidden;
+            margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden;
         }
 
-        /* Шапка со звездами */
-        .top-bar {
-            padding: 15px; text-align: center;
-            background: rgba(255,255,255,0.05); border-bottom: 1px solid #222;
-        }
-        .stars-display { color: var(--epic); font-weight: bold; font-size: 22px; text-shadow: 0 0 10px rgba(241,196,15,0.3); }
+        .top-bar { padding: 15px; text-align: center; background: rgba(255,255,255,0.05); border-bottom: 1px solid #222; }
+        .stars-display { color: var(--epic); font-weight: bold; font-size: 22px; }
 
-        /* Контент */
         .content { flex: 1; overflow-y: auto; padding: 20px; display: none; padding-bottom: 100px; }
         .content.active { display: block; }
 
         /* Рулетка */
         .roulette-wrapper {
             position: relative; width: 100%; height: 160px; background: #0f0f11;
-            border: 2px solid #222; border-radius: 24px; overflow: hidden;
-            display: flex; align-items: center; margin-top: 20px;
+            border: 2px solid #222; border-radius: 24px; overflow: hidden; display: flex; align-items: center; margin-top: 20px;
         }
-        .center-line {
-            position: absolute; left: 50%; transform: translateX(-50%);
-            width: 3px; height: 100%; background: #fff; z-index: 10; box-shadow: 0 0 15px #fff;
-        }
+        .center-line { position: absolute; left: 50%; transform: translateX(-50%); width: 3px; height: 100%; background: #fff; z-index: 10; box-shadow: 0 0 15px #fff; }
         .tape { display: flex; align-items: center; gap: 12px; padding: 0 10px; transition: transform 5s cubic-bezier(0.15, 0, 0.05, 1); }
-        .nft-card { 
-            min-width: 125px; height: 125px; background: var(--card-bg); 
-            border-radius: 20px; overflow: hidden; border-bottom: 5px solid #333; flex-shrink: 0; 
-        }
+        .nft-card { min-width: 125px; height: 125px; background: var(--card-bg); border-radius: 20px; overflow: hidden; border-bottom: 5px solid #333; flex-shrink: 0; }
         .nft-card img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Апгрейд Интерфейс */
+        .upgrade-zone { text-align: center; margin-top: 20px; }
+        .upgrade-slot { 
+            width: 150px; height: 150px; border: 2px dashed #444; border-radius: 25px; 
+            margin: 20px auto; display: flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,0.02); overflow: hidden;
+        }
+        .upgrade-slot img { width: 100%; height: 100%; object-fit: cover; }
+        .upgrade-chance { font-size: 14px; color: var(--accent); margin: 10px 0; }
+        
+        .anim-glow { animation: glow 1.5s infinite alternate; }
+        @keyframes glow { from { box-shadow: 0 0 5px var(--accent); } to { box-shadow: 0 0 25px var(--accent); } }
 
         /* Инвентарь */
         .inventory-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
-        .inv-item { 
-            background: #1a1a1c; border-radius: 20px; padding: 10px; text-align: center; 
-            border: 1px solid #333; position: relative;
-        }
-        .inv-item img { width: 100%; aspect-ratio: 1/1; border-radius: 15px; object-fit: cover; margin-bottom: 10px; }
-        
-        /* Кнопки */
-        .btn-main { 
-            width: 100%; padding: 18px; background: #fff; color: #000; 
-            border-radius: 18px; font-weight: 900; border: none; margin-top: 20px; cursor: pointer;
-        }
-        .btn-action { padding: 8px; border-radius: 10px; border: none; font-size: 12px; font-weight: bold; cursor: pointer; margin: 2px; width: 90%; }
-        .btn-upgrade { background: var(--accent); color: white; }
-        .btn-sell { background: #e74c3c; color: white; }
-
-        /* Модалка выигрыша */
-        #winModal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.98); z-index: 1000; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .win-img-large { width: 280px; height: 280px; border-radius: 30px; object-fit: cover; border: 4px solid #fff; box-shadow: 0 0 30px rgba(255,255,255,0.2); }
+        .inv-item { background: #1a1a1c; border-radius: 20px; padding: 10px; text-align: center; border: 1px solid #333; }
+        .inv-item img { width: 100%; aspect-ratio: 1/1; border-radius: 15px; object-fit: cover; }
 
         /* Навигация */
         .nav-bar {
             position: fixed; bottom: 0; width: 100%; height: 80px; background: var(--nav-bg);
             display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #222;
         }
-        .nav-item { color: #555; text-align: center; cursor: pointer; transition: 0.3s; }
+        .nav-item { color: #555; text-align: center; cursor: pointer; flex: 1; }
         .nav-item.active { color: white; }
+        .nav-item.center-btn { 
+            background: var(--accent); color: white; border-radius: 50%; 
+            width: 60px; height: 60px; flex: none; display: flex; 
+            flex-direction: column; justify-content: center; margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(71, 161, 255, 0.4);
+        }
+
+        .btn-main { width: 100%; padding: 18px; background: #fff; color: #000; border-radius: 18px; font-weight: 900; border: none; cursor: pointer; }
+        #winModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.98); z-index: 1000; flex-direction: column; align-items: center; justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -96,7 +89,18 @@
             <div class="center-line"></div>
             <div id="tape" class="tape"></div>
         </div>
-        <button class="btn-main" id="spinBtn" onclick="startSpin()">ОТКРЫТЬ (100 ⭐)</button>
+        <button class="btn-main" style="margin-top: 30px;" id="spinBtn" onclick="startSpin()">ОТКРЫТЬ (100 ⭐)</button>
+    </div>
+
+    <div id="tab-upgrade" class="content">
+        <h3 style="text-align: center;">UPGRADE ⚡</h3>
+        <div class="upgrade-zone">
+            <div class="upgrade-slot" id="upgradeSlot" onclick="switchTab('profile', document.getElementById('nav-profile'))">
+                <span id="slotPlaceholder">Выбери предмет</span>
+            </div>
+            <div class="upgrade-chance" id="upgradeChanceText">Шанс: --%</div>
+            <button class="btn-main" id="upgradeBtn" disabled onclick="processUpgrade()">УЛУЧШИТЬ ПРЕДМЕТ</button>
+        </div>
     </div>
 
     <div id="tab-profile" class="content">
@@ -114,12 +118,13 @@
 
     <div class="nav-bar">
         <div class="nav-item active" onclick="switchTab('roulette', this)">
-            <div style="font-size: 24px;">🎰</div>
-            <div>Кейс</div>
+            <div style="font-size: 24px;">🎰</div><div>Кейс</div>
         </div>
-        <div class="nav-item" onclick="switchTab('profile', this)">
-            <div style="font-size: 24px;">👤</div>
-            <div>Профиль</div>
+        <div class="nav-item center-btn" onclick="switchTab('upgrade', this)">
+            <div style="font-size: 24px;">⚡</div><div>Up</div>
+        </div>
+        <div class="nav-item" id="nav-profile" onclick="switchTab('profile', this)">
+            <div style="font-size: 24px;">👤</div><div>Профиль</div>
         </div>
     </div>
 
@@ -129,12 +134,13 @@
 
         let stars = 1000;
         let inventory = [];
+        let selectedForUpgrade = null;
         let currentWinningItem = null;
 
         const itemsConfig = [
-            { rarity: 'common', img: 'https://raw.githubusercontent.com/syetolog2011-sudo/casinocharila/main/photo_5296748618452769466_m.jpg', price: 20, chance: 50, next: 'rare' },
-            { rarity: 'rare', img: 'https://raw.githubusercontent.com/syetolog2011-sudo/casinocharila/main/photo_5296748618452769469_m (1).jpg', price: 125, chance: 35, next: 'epic' },
-            { rarity: 'epic', img: 'https://raw.githubusercontent.com/syetolog2011-sudo/casinocharila/main/photo_5296748618452769416_m.jpg', price: 525, chance: 15, next: null }
+            { rarity: 'common', img: 'https://raw.githubusercontent.com/syetolog2011-sudo/casinocharila/main/photo_5296748618452769466_m.jpg', price: 20, chance: 50 },
+            { rarity: 'rare', img: 'https://raw.githubusercontent.com/syetolog2011-sudo/casinocharila/main/photo_5296748618452769469_m (1).jpg', price: 125, chance: 35 },
+            { rarity: 'epic', img: 'https://raw.githubusercontent.com/syetolog2011-sudo/casinocharila/main/photo_5296748618452769416_m.jpg', price: 525, chance: 15 }
         ];
 
         function switchTab(tabName, el) {
@@ -145,18 +151,14 @@
             if(tabName === 'profile') renderInventory();
         }
 
-        function getRandomItem() {
-            const rand = Math.random() * 100;
-            if (rand < 50) return itemsConfig[0];
-            if (rand < 85) return itemsConfig[1];
-            return itemsConfig[2];
-        }
-
         function buildTape() {
             const tape = document.getElementById('tape');
             tape.innerHTML = '';
             for (let i = 0; i < 80; i++) {
-                const item = getRandomItem();
+                const rand = Math.random() * 100;
+                let item = itemsConfig[0];
+                if(rand > 50) item = itemsConfig[1];
+                if(rand > 85) item = itemsConfig[2];
                 const card = document.createElement('div');
                 card.className = `nft-card`;
                 card.innerHTML = `<img src="${item.img}">`;
@@ -167,11 +169,11 @@
         function startSpin() {
             if (stars < 100) return alert("Мало звезд!");
             stars -= 100; updateStars();
-            
-            const btn = document.getElementById('spinBtn');
-            btn.disabled = true;
+            const btn = document.getElementById('spinBtn'); btn.disabled = true;
 
-            currentWinningItem = getRandomItem();
+            const rand = Math.random() * 100;
+            currentWinningItem = rand < 50 ? itemsConfig[0] : (rand < 85 ? itemsConfig[1] : itemsConfig[2]);
+            
             const winIndex = 60;
             const cards = document.getElementById('tape').querySelectorAll('.nft-card');
             cards[winIndex].innerHTML = `<img src="${currentWinningItem.img}">`;
@@ -179,74 +181,73 @@
             const offset = (winIndex * 137) - (document.querySelector('.roulette-wrapper').offsetWidth / 2) + 68;
             document.getElementById('tape').style.transition = 'none';
             document.getElementById('tape').style.transform = 'translateX(0)';
-            
             setTimeout(() => {
                 document.getElementById('tape').style.transition = 'transform 5s cubic-bezier(0.15, 0, 0.05, 1)';
                 document.getElementById('tape').style.transform = `translateX(-${offset}px)`;
             }, 50);
-
-            setTimeout(showWinModal, 5500);
+            setTimeout(() => document.getElementById('winModal').style.display = 'flex', 5500);
+            document.getElementById('winPhotoContainer').innerHTML = `<img src="${currentWinningItem.img}" style="width:280px;height:280px;border-radius:30px;object-fit:cover;border:4px solid #fff">`;
+            document.getElementById('quickSellBtn').onclick = () => { stars += currentWinningItem.price; updateStars(); closeModal(); };
         }
 
-        function showWinModal() {
-            const modal = document.getElementById('winModal');
-            document.getElementById('winPhotoContainer').innerHTML = `<img src="${currentWinningItem.img}" class="win-img-large" style="border-color:var(--${currentWinningItem.rarity})">`;
-            document.getElementById('quickSellBtn').onclick = () => {
-                stars += currentWinningItem.price; updateStars(); closeModal();
-            };
-            modal.style.display = 'flex';
-        }
-
-        function toInventory() {
-            inventory.push({...currentWinningItem});
-            closeModal();
-        }
-
-        function closeModal() {
-            document.getElementById('winModal').style.display = 'none';
-            document.getElementById('spinBtn').disabled = false;
-            buildTape();
-        }
+        function toInventory() { inventory.push({...currentWinningItem}); closeModal(); }
+        function closeModal() { document.getElementById('winModal').style.display = 'none'; document.getElementById('spinBtn').disabled = false; buildTape(); }
 
         function renderInventory() {
             const invGrid = document.getElementById('inventory');
-            invGrid.innerHTML = inventory.length === 0 ? '<p style="grid-column: 1/3; text-align:center; opacity:0.5">Пусто</p>' : '';
+            invGrid.innerHTML = inventory.length === 0 ? '<p style="grid-column:1/3;text-align:center">Пусто</p>' : '';
             inventory.forEach((item, index) => {
                 const div = document.createElement('div');
                 div.className = 'inv-item';
-                div.style.borderBottom = `4px solid var(--${item.rarity})`;
                 div.innerHTML = `
                     <img src="${item.img}">
-                    <button class="btn-action btn-sell" onclick="sellItem(${index})">ПРОДАТЬ (${item.price} ⭐)</button>
-                    ${item.next ? `<button class="btn-action btn-upgrade" onclick="upgradeItem(${index})">УЛУЧШИТЬ (50%)</button>` : ''}
+                    <button class="btn-main" style="padding:10px;font-size:12px;margin-top:5px;background:#47a1ff;color:#fff" onclick="selectForUpgrade(${index})">ВЫБРАТЬ ДЛЯ UP</button>
+                    <button class="btn-main" style="padding:10px;font-size:12px;margin-top:5px;background:#e74c3c;color:#fff" onclick="sellItem(${index})">ПРОДАТЬ</button>
                 `;
                 invGrid.appendChild(div);
             });
         }
 
-        function upgradeItem(index) {
-            const item = inventory[index];
-            if (confirm(`Попробовать улучшить до ${item.next}? Шанс 40%. При неудаче предмет сгорит!`)) {
-                if (Math.random() < 0.4) {
-                    const nextItem = itemsConfig.find(i => i.rarity === item.next);
-                    inventory[index] = {...nextItem};
-                    alert("УСПЕХ! Предмет улучшен!");
+        function selectForUpgrade(index) {
+            selectedForUpgrade = { ...inventory[index], index };
+            const slot = document.getElementById('upgradeSlot');
+            slot.innerHTML = `<img src="${selectedForUpgrade.img}" class="anim-glow">`;
+            
+            let chance = selectedForUpgrade.rarity === 'common' ? '7%' : '15%'; // Очень маленькие шансы
+            document.getElementById('upgradeChanceText').innerText = `Шанс прыжка до EPIC: ${chance}`;
+            document.getElementById('upgradeBtn').disabled = false;
+            switchTab('upgrade', document.querySelector('.center-btn'));
+        }
+
+        function processUpgrade() {
+            const btn = document.getElementById('upgradeBtn');
+            btn.disabled = true;
+            document.getElementById('upgradeSlot').style.opacity = "0.5";
+            
+            setTimeout(() => {
+                const chance = selectedForUpgrade.rarity === 'common' ? 0.07 : 0.15;
+                if (Math.random() < chance) {
+                    inventory[selectedForUpgrade.index] = { ...itemsConfig[2] };
+                    alert("БОЖЕ МОЙ! ЭТО EPIC! 🔥");
                 } else {
-                    inventory.splice(index, 1);
-                    alert("ПРОВАЛ! Предмет сгорел.");
+                    inventory.splice(selectedForUpgrade.index, 1);
+                    alert("УПС... ПРЕДМЕТ СГОРЕЛ 💨");
                 }
+                resetUpgrade();
                 renderInventory();
-            }
+            }, 2000);
         }
 
-        function sellItem(index) {
-            stars += inventory[index].price;
-            inventory.splice(index, 1);
-            updateStars(); renderInventory();
+        function resetUpgrade() {
+            selectedForUpgrade = null;
+            document.getElementById('upgradeSlot').innerHTML = '<span id="slotPlaceholder">Выбери предмет</span>';
+            document.getElementById('upgradeSlot').style.opacity = "1";
+            document.getElementById('upgradeChanceText').innerText = "Шанс: --%";
+            document.getElementById('upgradeBtn').disabled = true;
         }
 
+        function sellItem(index) { stars += inventory[index].price; inventory.splice(index, 1); updateStars(); renderInventory(); }
         function updateStars() { document.getElementById('starCount').innerText = stars; }
-
         buildTape();
     </script>
 </body>
