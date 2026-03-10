@@ -1,122 +1,88 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gift Jackpot</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        body { 
-            background: #0a0a0a; 
-            color: white; 
-            font-family: 'Segoe UI', sans-serif; 
-            margin: 0; 
-            padding: 16px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
-        }
-        
-        .balance { color: #47a1ff; font-weight: bold; margin-bottom: 20px; }
+<style>
+    /* Эффект свечения для карточек */
+    .card {
+        background: #161618;
+        border-radius: 16px;
+        padding: 16px;
+        text-align: center;
+        border: 1px solid #28282a;
+        transition: transform 0.2s;
+        position: relative;
+        overflow: hidden;
+    }
 
-        /* Контейнер рулетки */
-        .window {
-            position: relative;
-            width: 100%;
-            max-width: 400px;
-            height: 120px;
-            background: #161618;
-            border-radius: 16px;
-            border: 1px solid #28282a;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-        }
+    .card:hover { transform: translateY(-5px); border-color: #47a1ff; }
 
-        .pointer {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 2px;
-            height: 100%;
-            background: #fff;
-            z-index: 10;
-            box-shadow: 0 0 10px #fff;
-        }
+    /* Метки редкости */
+    .rarity {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+    .epic { background: #f1c40f; color: #000; box-shadow: 0 0 10px #f1c40f; }
+    .rare { background: #3498db; color: #fff; }
+    .common { background: #95a5a6; color: #fff; }
 
-        .list {
-            display: flex;
-            gap: 10px;
-            padding: 0 10px;
-            transition: transform 4s cubic-bezier(0.1, 0, 0.1, 1);
-        }
+    .card img { width: 80px; height: 80px; object-fit: contain; margin-bottom: 10px; }
+</style>
 
-        .card {
-            min-width: 90px;
-            height: 90px;
-            background: #242426;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .card img { width: 60px; }
-
-        .btn {
-            width: 100%;
-            max-width: 400px;
-            padding: 18px;
-            background: white;
-            color: black;
-            border: none;
-            border-radius: 16px;
-            font-weight: bold;
-            font-size: 18px;
-            margin-top: 30px;
-            cursor: pointer;
-        }
-
-        .btn:active { transform: scale(0.98); }
-    </style>
-</head>
-<body>
-
-    <h2>Кейс «Frozen» ❄️</h2>
-    <div class="balance">Баланс: <span id="val">100</span> 💎</div>
-
-    <div class="window">
-        <div class="pointer"></div>
-        <div class="list" id="list"></div>
+<div class="grid">
+    <div class="card">
+        <span class="rarity epic">Epic</span>
+        <img src="https://cdn-icons-png.flaticon.com/512/9420/9420917.png">
+        <div class="price-tag">Jackpot Frog 🐸</div>
     </div>
+    <div class="card">
+        <span class="rarity rare">Rare</span>
+        <img src="https://cdn-icons-png.flaticon.com/512/2912/2912761.png">
+        <div class="price-tag">Ice Diamond 💎</div>
+    </div>
+    <div class="card">
+        <span class="rarity common">Common</span>
+        <img src="https://cdn-icons-png.flaticon.com/512/5219/5219258.png">
+        <div class="price-tag">Frozen Box 📦</div>
+    </div>
+</div>
 
-    <button class="btn" onclick="spin()">ОТКРЫТЬ КЕЙС</button>
+<script>
+    // Массив с красивыми NFT объектами
+    const nftItems = [
+        { name: 'Frog', img: 'https://cdn-icons-png.flaticon.com/512/9420/9420917.png', rarity: 'epic' },
+        { name: 'Diamond', img: 'https://cdn-icons-png.flaticon.com/512/2912/2912761.png', rarity: 'rare' },
+        { name: 'Box', img: 'https://cdn-icons-png.flaticon.com/512/5219/5219258.png', rarity: 'common' },
+        { name: 'Star', img: 'https://cdn-icons-png.flaticon.com/512/1828/1828884.png', rarity: 'common' }
+    ];
 
-    <script>
-        const list = document.getElementById('list');
-        const items = ['frog', 'orange', 'rose', 'christmas-star'];
+    const list = document.getElementById('list');
+    
+    // Генерируем ленту из красивых NFT
+    for (let i = 0; i < 60; i++) {
+        const item = nftItems[i % nftItems.length];
+        list.innerHTML += `
+            <div class="card" style="min-width: 100px; height: 100px; margin: 0 5px;">
+                <img src="${item.img}" style="width: 70px;">
+            </div>`;
+    }
+
+    function spin() {
+        // Логика списания баланса (визуально)
+        let balance = document.getElementById('val');
+        if (parseInt(balance.innerText) < 10) return alert("Недостаточно 💎");
         
-        // Заполняем ленту (50 штук)
-        for (let i = 0; i < 50; i++) {
-            const name = items[i % 4];
-            list.innerHTML += `<div class="card"><img src="https://img.icons8.com/fluency/96/${name}.png"></div>`;
-        }
+        balance.innerText = parseInt(balance.innerText) - 10;
 
-        function spin() {
-            const move = Math.floor(Math.random() * 1000) + 2500;
-            list.style.transform = `translateX(-${move}px)`;
-            
-            setTimeout(() => {
-                alert("Выпал редкий предмет! 🎁");
-                list.style.transition = 'none';
-                list.style.transform = 'translateX(0)';
-                setTimeout(() => list.style.transition = 'transform 4s cubic-bezier(0.1, 0, 0.1, 1)', 50);
-            }, 4500);
-        }
-
-        // Инициализация TG
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand();
-    </script>
-</body>
-</html>
+        const move = Math.floor(Math.random() * 1500) + 3000;
+        list.style.transform = `translateX(-${move}px)`;
+        
+        // Показываем результат
+        setTimeout(() => {
+            tg.HapticFeedback.notificationOccurred('success'); // Вибрация в TG
+            alert("Вы получили новый NFT подарок! Проверьте инвентарь.");
+        }, 4500);
+    }
+</script>
