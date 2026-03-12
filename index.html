@@ -5,84 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NFT Mobile Game</title>
     <style>
-        /* ОСНОВНОЙ ТЕМНО-СИНИЙ ФОН */
         body {
-            background-color: #000033; /* Твой фирменный цвет */
+            background-color: #000033; /* Твой синий фон */
             margin: 0; padding: 0;
             display: flex; flex-direction: column;
-            justify-content: center; /* Центрируем кнопки по вертикали */
-            align-items: center; /* Центрируем кнопки по горизонтали */
+            align-items: center;
             height: 100vh; overflow: hidden;
             font-family: sans-serif;
         }
 
-        /* КОНТЕЙНЕР ДЛЯ КНОПОК-КАРТИНОК */
-        .menu-container {
-            width: 90%;
-            max-width: 400px; /* Чтобы на планшетах не были гигантскими */
-            display: flex;
-            flex-direction: column;
-            gap: 20px; /* Расстояние между кнопками */
+        /* БАЛАНС СВЕРХУ */
+        .header {
+            width: 100%; padding: 20px 0;
+            display: flex; justify-content: center;
+        }
+        .balance-img {
+            width: 120px; /* Размер твоей иконки со звездой */
+            height: auto;
         }
 
-        /* Общий стиль для кнопок-картинок */
+        /* КОНТЕЙНЕР ДЛЯ КНОПОК */
+        .menu-container {
+            flex: 1;
+            display: flex; flex-direction: column;
+            justify-content: center;
+            gap: 20px; width: 90%; max-width: 400px;
+        }
+
+        /* КНОПКИ-КАРТИНКИ */
         .game-btn {
             width: 100%;
-            border-radius: 25px; /* Скругляем края кнопок */
-            overflow: hidden; /* Чтобы картинка не вылезала за края */
             cursor: pointer;
-            transition: transform 0.1s; /* Анимация нажатия */
-            -webkit-tap-highlight-color: transparent; /* Убираем синий квадрат при нажатии */
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5); /* Базовая тень */
+            transition: transform 0.1s;
+            -webkit-tap-highlight-color: transparent;
         }
-        
-        /* Эффект нажатия (кнопка слегка сжимается) */
-        .game-btn:active {
-            transform: scale(0.96);
-        }
+        .game-btn:active { transform: scale(0.95); }
+        .game-btn img { width: 100%; height: auto; display: block; border-radius: 20px; }
 
-        /* СВЕЧЕНИЕ ДЛЯ РУЛЕТКИ (СИНЕЕ) */
-        .roulette-style {
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
-            border: 2px solid rgba(0, 212, 255, 0.2);
-        }
-
-        /* СВЕЧЕНИЕ ДЛЯ АПГРЕЙДА (ОРАНЖЕВОЕ) */
-        .upgrade-style {
-            box-shadow: 0 0 20px rgba(255, 100, 0, 0.4);
-            border: 2px solid rgba(255, 100, 0, 0.2);
-        }
-
-        /* Стиль самих картинок внутри кнопок */
-        .game-btn img {
-            width: 100%; height: auto; display: block;
-        }
     </style>
 </head>
 <body>
 
+    <div class="header">
+        <img src="image_3afed4.png" class="balance-img" alt="Balance">
+    </div>
+
     <div class="menu-container">
         
-        <div class="game-btn roulette-style" onclick="openPage('roulette')">
+        <div class="game-btn" onclick="location.href='roulette.html'">
             <img src="ChatGPT Image 12 mar. 2026 г., 12_09_23.png" alt="Рулетка">
         </div>
 
-        <div class="game-btn upgrade-style" onclick="openPage('upgrade')">
+        <div class="game-btn" onclick="location.href='upgrade.html'">
             <img src="ChatGPT Image 12 mar. 2026 г., 12_16_18.png" alt="Апгрейд">
         </div>
 
     </div>
-
-    <script>
-        function openPage(name) {
-            console.log("Переход в раздел: " + name);
-            if(name === 'roulette') {
-                alert('Открываем окно Рулетки!');
-            } else {
-                alert('Открываем окно Апгрейда!');
-            }
-        }
-    </script>
 
 </body>
 </html>
