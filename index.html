@@ -10,24 +10,50 @@
             background-color: #000033; /* Твой фирменный цвет */
             margin: 0; padding: 0;
             display: flex; flex-direction: column;
-            justify-content: center; /* Кнопки по центру вертикали */
-            align-items: center; /* Кнопки по центру горизонтали */
+            justify-content: center; /* Центрируем кнопки по вертикали */
+            align-items: center; /* Центрируем кнопки по горизонтали */
             height: 100vh; overflow: hidden;
+            font-family: sans-serif;
+        }
+
+        /* КОНТЕЙНЕР ДЛЯ КНОПОК-КАРТИНОК */
+        .menu-container {
+            width: 90%;
+            max-width: 400px; /* Чтобы на планшетах не были гигантскими */
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* Расстояние между кнопками */
         }
 
         /* Общий стиль для кнопок-картинок */
         .game-btn {
-            width: 90%; /* Ширина кнопки - 90% от экрана телефона */
-            max-width: 400px; /* Максимальная ширина, чтобы на планшетах не были гигантскими */
-            margin-bottom: 20px; /* Отступ между кнопками */
-            transition: transform 0.1s; /* Легкая анимация нажатия */
-            -webkit-tap-highlight-color: transparent; /* Убираем синий квадрат при нажатии на мобилках */
+            width: 100%;
+            border-radius: 25px; /* Скругляем края кнопок */
+            overflow: hidden; /* Чтобы картинка не вылезала за края */
             cursor: pointer;
+            transition: transform 0.1s; /* Анимация нажатия */
+            -webkit-tap-highlight-color: transparent; /* Убираем синий квадрат при нажатии */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); /* Базовая тень */
         }
         
         /* Эффект нажатия (кнопка слегка сжимается) */
-        .game-btn:active { transform: scale(0.96); }
+        .game-btn:active {
+            transform: scale(0.96);
+        }
 
+        /* СВЕЧЕНИЕ ДЛЯ РУЛЕТКИ (СИНЕЕ) */
+        .roulette-style {
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+        }
+
+        /* СВЕЧЕНИЕ ДЛЯ АПГРЕЙДА (ОРАНЖЕВОЕ) */
+        .upgrade-style {
+            box-shadow: 0 0 20px rgba(255, 100, 0, 0.4);
+            border: 2px solid rgba(255, 100, 0, 0.2);
+        }
+
+        /* Стиль самих картинок внутри кнопок */
         .game-btn img {
             width: 100%; height: auto; display: block;
         }
@@ -35,13 +61,28 @@
 </head>
 <body>
 
-    <div class="game-btn" onclick="console.log('Open Roulette')">
-        <img src="btn_roulette.png" alt="Рулетка">
+    <div class="menu-container">
+        
+        <div class="game-btn roulette-style" onclick="openPage('roulette')">
+            <img src="ChatGPT Image 12 mar. 2026 г., 12_09_23.png" alt="Рулетка">
+        </div>
+
+        <div class="game-btn upgrade-style" onclick="openPage('upgrade')">
+            <img src="ChatGPT Image 12 mar. 2026 г., 12_16_18.png" alt="Апгрейд">
+        </div>
+
     </div>
 
-    <div class="game-btn" onclick="console.log('Open Upgrade')">
-        <img src="btn_upgrade.png" alt="Апгрейд">
-    </div>
+    <script>
+        function openPage(name) {
+            console.log("Переход в раздел: " + name);
+            if(name === 'roulette') {
+                alert('Открываем окно Рулетки!');
+            } else {
+                alert('Открываем окно Апгрейда!');
+            }
+        }
+    </script>
 
 </body>
 </html>
