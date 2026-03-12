@@ -3,60 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NFT Mobile Game</title>
+    <title>NFT Game UI</title>
     <style>
-        /* ПРИНУДИТЕЛЬНЫЙ СИНИЙ ФОН */
-        html, body {
-            background-color: #02132f !important; 
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
+        body {
+            background-color: #02132f;
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column;
             align-items: center;
-            justify-content: center;
-            font-family: sans-serif;
+            font-family: 'Segoe UI', sans-serif;
+            color: white;
+            height: 100vh;
         }
 
+        /* ВЕРХНЯЯ ПАНЕЛЬ С БАЛАНСОМ */
+        .top-bar {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 20px 0;
+            gap: 15px;
+        }
+
+        .balance-item {
+            background: #1c253d;
+            border-radius: 20px;
+            padding: 5px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 100px;
+            height: 40px;
+        }
+
+        .balance-item img.icon { width: 24px; height: 24px; }
+        .balance-item .plus-btn { width: 22px; height: 22px; cursor: pointer; }
+        .balance-item span { font-weight: bold; font-size: 18px; }
+
+        /* КОНТЕЙНЕР ДЛЯ КНОПОК-ПЛАШЕК */
         .menu-container {
-            width: 90%;
+            width: 92%;
             max-width: 400px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 12px;
+            margin-top: 20px;
         }
 
-        .game-btn {
+        /* СТИЛЬ ПЛАШКИ КАК НА СКРИНЕ */
+        .menu-card {
             width: 100%;
+            height: 90px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            text-decoration: none;
+            color: white;
+            position: relative;
             cursor: pointer;
-            border-radius: 20px;
-            overflow: hidden;
             transition: transform 0.1s;
-            background: rgba(255, 255, 255, 0.05);
-            min-height: 100px;
-            -webkit-tap-highlight-color: transparent;
+            overflow: hidden;
+            box-sizing: border-box;
         }
 
-        .game-btn:active { transform: scale(0.96); }
+        .menu-card:active { transform: scale(0.97); }
 
-        .game-btn img {
-            width: 100%;
-            height: auto;
-            display: block;
+        /* Цвета плашек (градиенты как на скрине) */
+        .bg-blue { background: linear-gradient(90deg, #1e4bb8, #3b82f6); }
+        .bg-orange { background: linear-gradient(90deg, #8b4513, #d2691e); }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+            object-fit: contain;
+        }
+
+        .card-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .card-sub {
+            font-size: 13px;
+            opacity: 0.8;
         }
     </style>
 </head>
 <body>
 
+    <div class="top-bar">
+        <div class="balance-item">
+            <img src="star.png" alt="⭐" class="icon"> 
+            <span id="balance">125</span>
+            <img src="plus.png" alt="+" class="plus-btn" onclick="alert('Пополнение')">
+        </div>
+    </div>
+
     <div class="menu-container">
-        <div class="game-btn" onclick="alert('Рулетка!')">
-            <img src="ruletka.jpg" alt="Рулетка">
+        
+        <div class="menu-card bg-blue" onclick="alert('Открываем Рулетку')">
+            <img src="ruletka.jpg" alt="" class="card-icon">
+            <div class="card-info">
+                <span class="card-title">Рулетка</span>
+                <span class="card-sub">Испытай удачу</span>
+            </div>
         </div>
 
-        <div class="game-btn" onclick="alert('Апгрейд!')">
-            <img src="upgrade.jpg" alt="Апгрейд">
+        <div class="menu-card bg-orange" onclick="alert('Открываем Апгрейд')">
+            <img src="upgrade.jpg" alt="" class="card-icon">
+            <div class="card-info">
+                <span class="card-title">Апгрейд</span>
+                <span class="card-sub">Стань сильнее</span>
+            </div>
         </div>
+
     </div>
 
 </body>
