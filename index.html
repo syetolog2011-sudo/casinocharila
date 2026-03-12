@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NFT Game - Stage 1</title>
+    <title>NFT Game - Stage 2</title>
     <style>
         /* Устанавливаем твой фон */
         body {
@@ -17,33 +17,63 @@
             font-family: -apple-system, system-ui, sans-serif;
             color: white;
             overflow: hidden;
+            box-sizing: border-box;
         }
 
-        /* Контейнер для будущего контента */
         .app-container {
             width: 100%;
             max-width: 500px;
             height: 100%;
             display: flex;
             flex-direction: column;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
         }
 
-        .status {
-            margin-top: 50%;
+        /* Шапка со звездами (для ориентира) */
+        .top-bar {
+            width: 100%;
             text-align: center;
-            opacity: 0.5;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
         }
-    </style>
-</head>
-<body>
+        .stars-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffca28; /* Золотой цвет */
+        }
 
-    <div class="app-container">
-        <div class="status">
-            <p>Фон установлен успешно.</p>
-            <p>Жду следующих инструкций...</p>
-        </div>
-    </div>
+        /* 🎰 ЗОНА РУЛЕТКИ КЕЙСОВ */
+        .roulette-section {
+            width: 100%;
+            height: 200px; /* Высота блока рулетки */
+            background: rgba(255, 255, 255, 0.05); /* Временный фон */
+            border: 2px dashed rgba(255, 255, 255, 0.2); /* Временная рамка */
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            text-align: center;
+        }
 
-</body>
-</html>
+        /* ⚡ ЗОНА АПГРЕЙДА */
+        .upgrade-section {
+            width: 100%;
+            flex: 1; /* Занимает оставшееся место */
+            background: rgba(255, 255, 255, 0.03); /* Временный фон */
+            border: 2px dashed rgba(255, 255, 255, 0.15); /* Временная рамка */
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Стиль для твоих будущих кнопок-картинок */
+        .img-btn {
+            cursor: pointer;
+            transition: transform 0.1s;
