@@ -35,13 +35,14 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        /* ТВОЯ ПИКСЕЛЬНАЯ ЗВЕЗДА */
+        /* ТВОЯ УМЕНЬШЕННАЯ ПИКСЕЛЬНАЯ ЗВЕЗДА */
         .star-icon-img {
-            width: 28px;
-            height: 28px;
+            /* РАЗМЕР УМЕНЬШЕН ДО 22px */
+            width: 22px;
+            height: 22px;
             object-fit: contain;
-            /* Чтобы пиксели были четкими */
-            image-rendering: pixelated; 
+            image-rendering: pixelated; /* Сохраняет четкость пикселей */
+            margin-right: -4px; /* Чуть сблизил со словом Баланс */
         }
 
         .balance-text { 
@@ -51,7 +52,7 @@
             margin: 0 5px;
         }
 
-        /* СИНИЙ ПЛЮСИК */
+        /* МОЙ ПЛЮСИК */
         .plus-btn {
             background: #3b82f6;
             width: 24px;
@@ -61,10 +62,12 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            transition: transform 0.1s;
             border: none;
         }
+        .plus-btn:active { transform: scale(0.85); }
 
-        /* КНОПКИ (ИМЕННО JPG) */
+        /* ТВОИ КНОПКИ */
         .menu-container {
             width: 90%;
             max-width: 400px;
@@ -79,25 +82,23 @@
             cursor: pointer;
             border-radius: 20px;
             overflow: hidden;
-            background: #1c253d; /* Подложка на случай если картинка грузится */
+            transition: transform 0.1s;
+            -webkit-tap-highlight-color: transparent;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
         }
-
-        .game-btn img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
+        .game-btn:active { transform: scale(0.96); }
+        .game-btn img { width: 100%; height: auto; display: block; }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
         <div class="balance-item">
-            <img src="star.png" alt="⭐" class="star-icon-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1828/1828884.png'">
+            <img src="star.png" alt="star" class="star-icon-img">
             
             <span class="balance-text">125</span>
             
-            <button class="plus-btn" onclick="alert('Магазин')">
+            <button class="plus-btn" onclick="alert('Магазин звезд')">
                 <svg width="14" height="14" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M6 2V10M2 6H10" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
                 </svg>
@@ -107,11 +108,11 @@
 
     <div class="menu-container">
         <div class="game-btn" onclick="alert('Рулетка!')">
-            <img src="ruletka.jpg" alt="Рулетка не найдена">
+            <img src="rulekta.png" alt="Рулетка">
         </div>
 
         <div class="game-btn" onclick="alert('Апгрейд!')">
-            <img src="upgrade.jpg" alt="Апгрейд не найден">
+            <img src="upg.png" alt="Апгрейд">
         </div>
     </div>
 
