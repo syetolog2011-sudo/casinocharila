@@ -3,118 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NFT Game</title>
+    <title>NFT Mobile Game</title>
     <style>
         body {
-            background-color: #000033; /* Твой темно-синий */
+            background-color: #000033; /* Твой темно-синий фон */
             margin: 0; padding: 0;
             font-family: -apple-system, system-ui, sans-serif;
             color: white;
             height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column;
         }
 
-        /* Шапка со звездами */
+        /* ШАПКА */
         .header {
-            padding: 15px; display: flex; justify-content: center;
-            background: rgba(0, 0, 0, 0.2);
+            padding: 15px 20px; display: flex; justify-content: center;
+            background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
-        .balance {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px 20px; border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .balance-badge {
+            background: rgba(255, 255, 255, 0.1); padding: 8px 20px; border-radius: 20px;
+            display: flex; align-items: center; gap: 10px; border: 1px solid rgba(255, 255, 255, 0.1);
             font-weight: bold;
         }
+        .balance-badge img { width: 22px; height: 22px; }
 
-        /* Страницы */
-        .page { display: none; padding: 20px; height: calc(100vh - 80px); overflow-y: auto; box-sizing: border-box; }
+        /* СТРАНИЦЫ */
+        .page { display: none; flex: 1; padding: 20px; overflow-y: auto; box-sizing: border-box; }
         .page.active { display: block; }
 
-        /* Большие кнопки на главной */
-        .main-btn {
-            width: 100%; height: 140px;
-            border-radius: 30px; margin-bottom: 20px;
-            display: flex; align-items: center; padding: 0 25px;
-            box-sizing: border-box; border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: 0.1s; -webkit-tap-highlight-color: transparent;
+        /* ГЛАВНЫЕ КНОПКИ */
+        .menu-card {
+            width: 100%; height: 120px; border-radius: 30px;
+            margin-bottom: 15px; display: flex; align-items: center;
+            padding: 0 20px; box-sizing: border-box;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative; overflow: hidden;
+            transition: transform 0.1s; -webkit-tap-highlight-color: transparent;
         }
-        .main-btn:active { transform: scale(0.96); }
+        .menu-card:active { transform: scale(0.97); }
 
         .bg-roulette { background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%); }
         .bg-upgrade { background: linear-gradient(90deg, #d35400 0%, #e67e22 100%); }
 
-        /* Список кейсов (подарков) внутри рулетки */
-        .case-item {
-            background: rgba(255, 255, 255, 0.05);
-            margin-bottom: 10px; padding: 15px;
-            border-radius: 20px; display: flex; align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .card-info { flex-grow: 1; margin-left: 15px; }
+        .card-title { font-size: 24px; font-weight: 800; display: block; }
+        .card-subtitle { font-size: 14px; opacity: 0.7; }
+
+        /* ПРЕВЬЮ ЧАСОВ В КНОПКЕ */
+        .preview-box { width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; }
+        .preview-box img { 
+            width: 110%; height: auto; 
+            transform: rotate(-10deg);
+            filter: drop-shadow(0 0 15px rgba(0,0,0,0.5));
         }
-        .case-img { width: 50px; height: 50px; margin-right: 15px; }
+
+        /* РУЛЕТКА */
+        .roulette-container { text-align: center; margin-top: 30px; }
+        .window {
+            position: relative; width: 100%; height: 130px;
+            background: rgba(0,0,0,0.4); border-radius: 20px;
+            overflow: hidden; border: 2px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center;
+        }
+        .pointer {
+            position: absolute; left: 50%; width: 2px; height: 100%;
+            background: #fff; z-index: 10; box-shadow: 0 0 15px #fff;
+        }
+        .tape { display: flex; padding: 0 10px; transition: transform 5s cubic-bezier(0.15, 0, 0.05, 1); }
+        .tape-item {
+            width: 100px; height: 100px; background: rgba(255,255,255,0.05);
+            margin-right: 10px; border-radius: 15px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .tape-item img { width: 90%; height: 90%; object-fit: contain; }
+
+        .btn-action {
+            background: #fff; color: #000; border: none;
+            width: 100%; padding: 18px; border-radius: 20px;
+            font-size: 20px; font-weight: bold; margin-top: 30px;
+        }
 
         .btn-back {
-            background: rgba(255,255,255,0.1); border: none; color: #fff;
+            background: rgba(255,255,255,0.1); border: none; color: white;
             padding: 10px 20px; border-radius: 12px; margin-bottom: 20px;
         }
-
-        h2 { margin-top: 0; font-size: 28px; }
-        .icon-lg { font-size: 40px; margin-right: 20px; }
     </style>
 </head>
 <body>
 
     <header class="header">
-        <div class="balance">⭐ 1,500</div>
+        <div class="balance-badge">
+            <img src="star_icon.png" alt="⭐">
+            <span>1 500</span>
+        </div>
     </header>
 
-    <div id="home" class="page active">
-        <div class="main-btn bg-roulette" onclick="go('roulette-list')">
-            <span class="icon-lg">🎁</span>
-            <div>
-                <b style="font-size: 24px;">Рулетка</b><br>
-                <span style="opacity: 0.7;">Открыть подарки</span>
+    <main id="home-page" class="page active">
+        <div class="menu-card bg-roulette" onclick="nav('roulette-page')">
+            <div style="font-size: 40px;">🎁</div>
+            <div class="card-info">
+                <span class="card-title">Рулетка</span>
+                <span class="card-subtitle">3 кейса доступно</span>
+            </div>
+            <div class="preview-box">
+                <img src="Gemini_Generated_Image_5om7ku5om7ku5om7.png" alt="Watch">
             </div>
         </div>
 
-        <div class="main-btn bg-upgrade" onclick="go('upgrade-screen')">
-            <span class="icon-lg">⚡</span>
-            <div>
-                <b style="font-size: 24px;">Апгрейд</b><br>
-                <span style="opacity: 0.7;">Улучши свои подарки</span>
+        <div class="menu-card bg-upgrade" onclick="nav('upgrade-page')">
+            <div style="font-size: 40px;">⚡</div>
+            <div class="card-info">
+                <span class="card-title">Апгрейд</span>
+                <span class="card-subtitle">Улучши свои подарки</span>
             </div>
         </div>
-    </div>
+    </main>
 
-    <div id="roulette-list" class="page">
-        <button class="btn-back" onclick="go('home')">← Назад</button>
-        <h2>Выбери подарок</h2>
-        
-        <div class="case-item" onclick="alert('Запуск рулетки 1')">
-            <img src="case1.png" class="case-img" alt="📦">
-            <div><b>Обычный подарок</b><br><small>100 ⭐</small></div>
-        </div>
-
-        <div class="case-item" onclick="alert('Запуск рулетки 2')">
-            <img src="case2.png" class="case-img" alt="🎁">
-            <div><b>Редкий подарок</b><br><small>500 ⭐</small></div>
-        </div>
-
-        <div class="case-item" onclick="alert('Запуск рулетки 3')">
-            <img src="case3.png" class="case-img" alt="💎">
-            <div><b>Эпик подарок</b><br><small>1,500 ⭐</small></div>
+    <div id="roulette-page" class="page">
+        <button class="btn-back" onclick="nav('home-page')">← Назад</button>
+        <div class="roulette-container">
+            <div class="window">
+                <div class="pointer"></div>
+                <div id="tape" class="tape"></div>
+            </div>
+            <button class="btn-action" onclick="spin()">ОТКРЫТЬ</button>
         </div>
     </div>
 
-    <div id="upgrade-screen" class="page">
-        <button class="btn-back" onclick="go('home')">← Назад</button>
-        <h2>Апгрейд</h2>
-        <p style="opacity: 0.5;">Здесь будет твоя полоска улучшения...</p>
+    <div id="upgrade-page" class="page">
+        <button class="btn-back" onclick="nav('home-page')">← Назад</button>
+        <h2 style="text-align: center;">Апгрейд предметов</h2>
+        <p style="text-align: center; opacity: 0.5;">Скоро добавим...</p>
     </div>
 
     <script>
-        function go(id) {
+        const tape = document.getElementById('tape');
+        let spinning = false;
+
+        function nav(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(id).classList.add('active');
+            if(id === 'roulette-page') buildTape();
         }
+
+        function buildTape() {
+            tape.style.transition = 'none';
+            tape.style.transform = 'translateX(0)';
+            tape.innerHTML = '';
+            for(let i = 0; i < 50; i++) {
+                const item = document.createElement('div');
+                item.className = 'tape-item';
+                // ТУТ ТОЖЕ ТВОИ ЧАСЫ ВНУТРИ РУЛЕТКИ
+                item.innerHTML = `<img src="Gemini_Generated_Image_5om7ku5om7ku5om7.png">`;
+                tape.appendChild(item);
+            }
+        }
+
+        function spin() {
+            if(spinning) return;
+            spinning = true;
+            const targetPos = (40 * 110) + Math.random() * 50;
+            tape.style.transition = 'transform 5s cubic-bezier(0.15, 0, 0.05, 1)';
+            tape.style.transform = `translateX(-${targetPos}px)`;
+            setTimeout(() => {
+                alert('Вы выбили: Золотые Часы!');
+                spinning = false;
+                buildTape();
+            }, 5500);
+        }
+        buildTape();
     </script>
 </body>
 </html>
