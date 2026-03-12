@@ -6,22 +6,18 @@
     <title>NFT Mobile Game</title>
     <style>
         body {
-            background-color: #000033; /* Твой синий фон */
+            background-color: #000033;
             margin: 0; padding: 0;
             display: flex; flex-direction: column;
             align-items: center;
-            height: 100vh; overflow: hidden;
+            height: 100vh;
             font-family: sans-serif;
         }
 
-        .header {
-            width: 100%; padding: 20px 0;
-            display: flex; justify-content: center;
-        }
-        .balance-img {
-            width: 110px; height: auto;
-            filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.4));
-        }
+        .header { width: 100%; padding: 20px 0; display: flex; justify-content: center; }
+        
+        /* Если картинка не грузится, этот стиль покажет рамку, чтобы мы видели, где она должна быть */
+        .balance-img { width: 110px; min-height: 40px; background: rgba(255,255,255,0.05); }
 
         .menu-container {
             flex: 1;
@@ -34,36 +30,42 @@
             width: 100%;
             cursor: pointer;
             transition: transform 0.1s;
-            -webkit-tap-highlight-color: transparent;
             border-radius: 25px;
             overflow: hidden;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.5);
+            background: rgba(255,255,255,0.05); /* Фон на случай, если картинка не прогрузится */
+            min-height: 100px;
         }
 
         .game-btn:active { transform: scale(0.96); }
 
         .game-btn img {
-            width: 100%; height: auto; display: block;
+            width: 100%;
+            height: auto;
+            display: block;
         }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <img src="image_3afed4.png" class="balance-img" alt="Balance">
+        <img src="image_3afed4.png" class="balance-img" alt="Баланс">
     </div>
 
     <div class="menu-container">
         
-        <div class="game-btn" onclick="alert('Открываем Рулетку...')">
-            <img src="rulekta.png" alt="Рулетка">
+        <div class="game-btn">
+            <img src="rulekta.png" alt="Рулетка" onerror="this.src='rulekta.PNG'">
         </div>
 
-        <div class="game-btn" onclick="alert('Открываем Апгрейд...')">
-            <img src="apgrade.png" alt="Апгрейд">
+        <div class="game-btn">
+            <img src="apgrade.png" alt="Апгрейд" onerror="this.src='apgrade.PNG'">
         </div>
 
     </div>
 
+    <script>
+        // Проверка в консоли (нажми F12 на сайте, чтобы увидеть ошибки)
+        console.log("Проверка загрузки картинок...");
+    </script>
 </body>
 </html>
