@@ -5,25 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NFT Mobile Game</title>
     <style>
-        /* ГЛУБОКИЙ ТЕМНО-СИНИЙ ФОН */
+        /* ФОН И БАЗОВЫЕ СТИЛИ */
         body {
-            background-color: #000033;
+            background-color: #000033; /* Твой синий фон */
             margin: 0; padding: 0;
             display: flex; flex-direction: column;
             align-items: center;
             height: 100vh; overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: sans-serif;
         }
 
-        /* ШАПКА (БАЛАНС) */
+        /* БАЛАНС СВЕРХУ */
         .header {
-            width: 100%; padding: 25px 0;
+            width: 100%; padding: 20px 0;
             display: flex; justify-content: center;
-            animation: fadeIn 1s ease;
         }
         .balance-img {
             width: 110px; height: auto;
-            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.3));
+            filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.4));
         }
 
         /* КОНТЕЙНЕР ДЛЯ КНОПОК */
@@ -31,33 +30,24 @@
             flex: 1;
             display: flex; flex-direction: column;
             justify-content: center;
-            gap: 25px; width: 85%; max-width: 380px;
+            gap: 20px; width: 85%; max-width: 380px;
         }
 
         /* КНОПКИ-КАРТИНКИ */
         .game-btn {
             width: 100%;
             cursor: pointer;
-            transition: transform 0.1s, filter 0.2s;
+            transition: transform 0.1s;
             -webkit-tap-highlight-color: transparent;
             border-radius: 25px;
             overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.5);
         }
 
-        /* ЭФФЕКТ ПРИ НАЖАТИИ */
-        .game-btn:active {
-            transform: scale(0.96);
-            filter: brightness(1.2);
-        }
+        .game-btn:active { transform: scale(0.96); }
 
         .game-btn img {
             width: 100%; height: auto; display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -69,12 +59,12 @@
 
     <div class="menu-container">
         
-        <div class="game-btn" onclick="alert('Переход в Рулетку...')">
-            <img src="ChatGPT Image 12 mar. 2026 г., 12_09_23.png" alt="Рулетка">
+        <div class="game-btn" onclick="alert('Открываем Рулетку...')">
+            <img src="rulekta.png" alt="Рулетка">
         </div>
 
-        <div class="game-btn" onclick="alert('Переход в Апгрейд...')">
-            <img src="ChatGPT Image 12 mar. 2026 г., 12_16_18.png" alt="Апгрейд">
+        <div class="game-btn" onclick="alert('Открываем Апгрейд...')">
+            <img src="apgrade.png" alt="Апгрейд">
         </div>
 
     </div>
