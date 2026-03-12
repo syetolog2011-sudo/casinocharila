@@ -5,23 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NFT Mobile Game</title>
     <style>
+        /* ГЛУБОКИЙ ТЕМНО-СИНИЙ ФОН */
         body {
-            background-color: #000033; /* Твой синий фон */
+            background-color: #000033;
             margin: 0; padding: 0;
             display: flex; flex-direction: column;
             align-items: center;
             height: 100vh; overflow: hidden;
-            font-family: sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* БАЛАНС СВЕРХУ */
+        /* ШАПКА (БАЛАНС) */
         .header {
-            width: 100%; padding: 20px 0;
+            width: 100%; padding: 25px 0;
             display: flex; justify-content: center;
+            animation: fadeIn 1s ease;
         }
         .balance-img {
-            width: 120px; /* Размер твоей иконки со звездой */
-            height: auto;
+            width: 110px; height: auto;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.3));
         }
 
         /* КОНТЕЙНЕР ДЛЯ КНОПОК */
@@ -29,19 +31,34 @@
             flex: 1;
             display: flex; flex-direction: column;
             justify-content: center;
-            gap: 20px; width: 90%; max-width: 400px;
+            gap: 25px; width: 85%; max-width: 380px;
         }
 
         /* КНОПКИ-КАРТИНКИ */
         .game-btn {
             width: 100%;
             cursor: pointer;
-            transition: transform 0.1s;
+            transition: transform 0.1s, filter 0.2s;
             -webkit-tap-highlight-color: transparent;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
         }
-        .game-btn:active { transform: scale(0.95); }
-        .game-btn img { width: 100%; height: auto; display: block; border-radius: 20px; }
 
+        /* ЭФФЕКТ ПРИ НАЖАТИИ */
+        .game-btn:active {
+            transform: scale(0.96);
+            filter: brightness(1.2);
+        }
+
+        .game-btn img {
+            width: 100%; height: auto; display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -52,11 +69,11 @@
 
     <div class="menu-container">
         
-        <div class="game-btn" onclick="location.href='roulette.html'">
+        <div class="game-btn" onclick="alert('Переход в Рулетку...')">
             <img src="ChatGPT Image 12 mar. 2026 г., 12_09_23.png" alt="Рулетка">
         </div>
 
-        <div class="game-btn" onclick="location.href='upgrade.html'">
+        <div class="game-btn" onclick="alert('Переход в Апгрейд...')">
             <img src="ChatGPT Image 12 mar. 2026 г., 12_16_18.png" alt="Апгрейд">
         </div>
 
