@@ -3,57 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NFT Mobile Game</title>
+    <title>NFT Game</title>
     <style>
         body {
             background-color: #000033;
             margin: 0; padding: 0;
             display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            height: 100vh; overflow: hidden;
-            font-family: sans-serif;
+            height: 100vh;
         }
 
         .menu-container {
-            width: 90%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            width: 90%; max-width: 400px;
+            display: flex; flex-direction: column; gap: 20px;
         }
 
         .game-btn {
-            width: 100%;
-            cursor: pointer;
-            border-radius: 25px;
-            overflow: hidden;
+            width: 100%; cursor: pointer;
+            border-radius: 20px; overflow: hidden;
             transition: transform 0.1s;
-            background: rgba(255, 255, 255, 0.05);
-            min-height: 100px;
             -webkit-tap-highlight-color: transparent;
+            background: rgba(255, 255, 255, 0.05); /* Фон на время загрузки */
+            min-height: 100px;
         }
 
         .game-btn:active { transform: scale(0.96); }
 
         .game-btn img {
-            width: 100%;
-            height: auto;
-            display: block;
+            width: 100%; height: auto; display: block;
         }
     </style>
 </head>
 <body>
 
     <div class="menu-container">
-        
         <div class="game-btn" onclick="alert('Рулетка!')">
-            <img src="rulekta.png" alt="Рулетка">
+            <img src="rulekta.png" alt="Рулетка" onerror="this.src='rulekta.PNG'">
         </div>
 
         <div class="game-btn" onclick="alert('Апгрейд!')">
-            <img src="ChatGPT Image 12 mar. 2026 г., 12_16_18.png" alt="Апгрейд">
+            <img src="upgrade.png" alt="Апгрейд" onerror="this.src='upgrade.PNG'">
         </div>
-
     </div>
 
 </body>
