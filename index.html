@@ -3,95 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NFT Game UI</title>
+    <title>NFT Mobile Game</title>
     <style>
-        body {
-            background-color: #02132f;
+        /* ТВОЙ ЦВЕТ ФОНА */
+        html, body {
+            background-color: #02132f !important; 
             margin: 0; padding: 0;
+            width: 100%; height: 100%;
             display: flex; flex-direction: column;
             align-items: center;
-            font-family: 'Segoe UI', sans-serif;
-            color: white;
-            height: 100vh;
+            font-family: sans-serif;
         }
 
-        /* ВЕРХНЯЯ ПАНЕЛЬ С БАЛАНСОМ */
+        /* ВЕРХНЯЯ ПАНЕЛЬ СО ЗВЕЗДАМИ */
         .top-bar {
             width: 100%;
             display: flex;
             justify-content: center;
             padding: 20px 0;
-            gap: 15px;
         }
 
         .balance-item {
-            background: #1c253d;
+            background: #1c253d; /* Темная подложка как на скрине */
             border-radius: 20px;
             padding: 5px 15px;
             display: flex;
             align-items: center;
             gap: 10px;
-            min-width: 100px;
             height: 40px;
         }
 
-        .balance-item img.icon { width: 24px; height: 24px; }
-        .balance-item .plus-btn { width: 22px; height: 22px; cursor: pointer; }
-        .balance-item span { font-weight: bold; font-size: 18px; }
+        /* Твои будущие картинки звезды и плюса */
+        .balance-item img.star-icon { width: 24px; height: 24px; }
+        .balance-item img.plus-icon { width: 22px; height: 22px; cursor: pointer; }
+        
+        .balance-item span { 
+            color: white; 
+            font-weight: bold; 
+            font-size: 18px; 
+        }
 
-        /* КОНТЕЙНЕР ДЛЯ КНОПОК-ПЛАШЕК */
+        /* ТВОЙ КОНТЕЙНЕР С КНОПКАМИ */
         .menu-container {
-            width: 92%;
+            width: 90%;
             max-width: 400px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-top: 20px;
+            gap: 20px;
+            margin-top: 10px;
         }
 
-        /* СТИЛЬ ПЛАШКИ КАК НА СКРИНЕ */
-        .menu-card {
+        .game-btn {
             width: 100%;
-            height: 90px;
-            border-radius: 25px;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            text-decoration: none;
-            color: white;
-            position: relative;
             cursor: pointer;
-            transition: transform 0.1s;
+            border-radius: 20px;
             overflow: hidden;
-            box-sizing: border-box;
+            transition: transform 0.1s;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .menu-card:active { transform: scale(0.97); }
+        .game-btn:active { transform: scale(0.96); }
 
-        /* Цвета плашек (градиенты как на скрине) */
-        .bg-blue { background: linear-gradient(90deg, #1e4bb8, #3b82f6); }
-        .bg-orange { background: linear-gradient(90deg, #8b4513, #d2691e); }
-
-        .card-icon {
-            width: 50px;
-            height: 50px;
-            margin-right: 15px;
-            object-fit: contain;
-        }
-
-        .card-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .card-sub {
-            font-size: 13px;
-            opacity: 0.8;
+        .game-btn img {
+            width: 100%;
+            height: auto;
+            display: block;
         }
     </style>
 </head>
@@ -99,30 +75,20 @@
 
     <div class="top-bar">
         <div class="balance-item">
-            <img src="star.png" alt="⭐" class="icon"> 
-            <span id="balance">125</span>
-            <img src="plus.png" alt="+" class="plus-btn" onclick="alert('Пополнение')">
+            <img src="star.png" alt="⭐" class="star-icon"> 
+            <span>125</span>
+            <img src="plus.png" alt="+" class="plus-icon" onclick="alert('Пополнение')">
         </div>
     </div>
 
     <div class="menu-container">
-        
-        <div class="menu-card bg-blue" onclick="alert('Открываем Рулетку')">
-            <img src="ruletka.jpg" alt="" class="card-icon">
-            <div class="card-info">
-                <span class="card-title">Рулетка</span>
-                <span class="card-sub">Испытай удачу</span>
-            </div>
+        <div class="game-btn" onclick="alert('Рулетка!')">
+            <img src="ruletka.jpg" alt="Рулетка">
         </div>
 
-        <div class="menu-card bg-orange" onclick="alert('Открываем Апгрейд')">
-            <img src="upgrade.jpg" alt="" class="card-icon">
-            <div class="card-info">
-                <span class="card-title">Апгрейд</span>
-                <span class="card-sub">Стань сильнее</span>
-            </div>
+        <div class="game-btn" onclick="alert('Апгрейд!')">
+            <img src="upgrade.jpg" alt="Апгрейд">
         </div>
-
     </div>
 
 </body>
