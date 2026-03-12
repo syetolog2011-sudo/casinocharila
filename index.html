@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NFT Mobile Game</title>
     <style>
-        /* ТВОЙ ЦВЕТ ФОНА */
         html, body {
             background-color: #02132f !important; 
             margin: 0; padding: 0;
@@ -15,7 +14,7 @@
             font-family: sans-serif;
         }
 
-        /* ВЕРХНЯЯ ПАНЕЛЬ СО ЗВЕЗДАМИ */
+        /* ПАНЕЛЬ БАЛАНСА */
         .top-bar {
             width: 100%;
             display: flex;
@@ -24,32 +23,46 @@
         }
 
         .balance-item {
-            background: #1c253d; /* Темная подложка как на скрине */
+            background: #1c253d;
             border-radius: 20px;
-            padding: 5px 15px;
+            padding: 5px 12px;
             display: flex;
             align-items: center;
             gap: 10px;
-            height: 40px;
+            height: 35px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* Твои будущие картинки звезды и плюса */
-        .balance-item img.star-icon { width: 24px; height: 24px; }
-        .balance-item img.plus-icon { width: 22px; height: 22px; cursor: pointer; }
-        
+        .star-icon { width: 22px; height: 22px; }
+
+        /* МОЙ ПЛЮСИК (SVG) */
+        .plus-wrapper {
+            background: #3b82f6; /* Синий фон для плюса */
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .plus-wrapper:active { transform: scale(0.9); }
+
         .balance-item span { 
             color: white; 
             font-weight: bold; 
-            font-size: 18px; 
+            font-size: 16px; 
+            min-width: 30px;
+            text-align: center;
         }
 
-        /* ТВОЙ КОНТЕЙНЕР С КНОПКАМИ */
+        /* ТВОИ КНОПКИ */
         .menu-container {
             width: 90%;
             max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
+            display: flex; flex-direction: column;
+            gap: 15px;
             margin-top: 10px;
         }
 
@@ -61,33 +74,32 @@
             transition: transform 0.1s;
             -webkit-tap-highlight-color: transparent;
         }
-
         .game-btn:active { transform: scale(0.96); }
-
-        .game-btn img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
+        .game-btn img { width: 100%; height: auto; display: block; }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
         <div class="balance-item">
-            <img src="star.png" alt="⭐" class="star-icon"> 
+            <img src="star.png" alt="⭐" class="star-icon" onerror="this.style.display='none'"> 
             <span>125</span>
-            <img src="plus.png" alt="+" class="plus-icon" onclick="alert('Пополнение')">
+            
+            <div class="plus-wrapper" onclick="alert('Магазин звезд')">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 2V10M2 6H10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
         </div>
     </div>
 
     <div class="menu-container">
         <div class="game-btn" onclick="alert('Рулетка!')">
-            <img src="ruletka.jpg" alt="Рулетка">
+            <img src="rulekta.png" alt="Рулетка">
         </div>
 
         <div class="game-btn" onclick="alert('Апгрейд!')">
-            <img src="upgrade.jpg" alt="Апгрейд">
+            <img src="upg.png" alt="Апгрейд">
         </div>
     </div>
 
