@@ -16,56 +16,64 @@
 
         .header { width: 100%; padding: 20px 0; display: flex; justify-content: center; }
         
-        /* Если картинка не грузится, этот стиль покажет рамку, чтобы мы видели, где она должна быть */
-        .balance-img { width: 110px; min-height: 40px; background: rgba(255,255,255,0.05); }
-
-        .menu-container {
-            flex: 1;
-            display: flex; flex-direction: column;
-            justify-content: center;
-            gap: 20px; width: 85%; max-width: 380px;
-        }
-
+        /* Рамка для отладки: если картинки нет, будет видно блок */
         .game-btn {
-            width: 100%;
+            width: 85%;
+            max-width: 380px;
+            margin-bottom: 20px;
             cursor: pointer;
-            transition: transform 0.1s;
             border-radius: 25px;
             overflow: hidden;
-            background: rgba(255,255,255,0.05); /* Фон на случай, если картинка не прогрузится */
-            min-height: 100px;
+            background: rgba(255, 255, 255, 0.05);
+            min-height: 120px; /* Чтобы рамка была видна сразу */
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .game-btn:active { transform: scale(0.96); }
 
         .game-btn img {
             width: 100%;
             height: auto;
             display: block;
         }
+
+        .game-btn:active { transform: scale(0.96); }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <img src="image_3afed4.png" class="balance-img" alt="Баланс">
+        <img src="image_3afed4.png" style="width:110px;" alt="Баланс">
     </div>
 
-    <div class="menu-container">
-        
-        <div class="game-btn">
-            <img src="rulekta.png" alt="Рулетка" onerror="this.src='rulekta.PNG'">
-        </div>
+    <div class="game-btn">
+        <img src="rulekta.png" alt="Рулетка" id="img-rulekta">
+    </div>
 
-        <div class="game-btn">
-            <img src="apgrade.png" alt="Апгрейд" onerror="this.src='apgrade.PNG'">
-        </div>
-
+    <div class="game-btn">
+        <img src="apgrade.png" alt="Апгрейд" id="img-apgrade">
     </div>
 
     <script>
-        // Проверка в консоли (нажми F12 на сайте, чтобы увидеть ошибки)
-        console.log("Проверка загрузки картинок...");
+        // СКРИПТ-ПОМОЩНИК: Если картинка не нашлась, он попробует другие варианты имен
+        function checkImage(id, names) {
+            let img = document.getElementById(id);
+            let index = 0;
+            img.onerror = function() {
+                if (index < names.length) {
+                    console.log("Пробую другое имя для " + id + ": " + names[index]);
+                    this.src = names[index];
+                    index++;
+                }
+            };
+        }
+
+        // Проверяем Рулетку (английская и русская 'р', разные расширения)
+        checkImage('img-rulekta', ['rulekta.PNG', 'rulekta.jpg', 'Рулетка.png']);
+        
+        // Проверяем Апгрейд (английская и русская 'а', 'u' вместо 'a')
+        checkImage('img-apgrade', ['apgrade.PNG', 'upgrade.png', 'Апгрейд.png', 'apgrade.png']);
     </script>
 </body>
 </html>
