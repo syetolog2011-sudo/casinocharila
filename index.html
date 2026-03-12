@@ -11,18 +11,16 @@
             width: 100%; height: 100%;
             display: flex; flex-direction: column;
             align-items: center;
-            font-family: sans-serif;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             -webkit-user-select: none;
-            overflow: hidden; /* Чтобы не дергалось при переключении */
+            color: white;
         }
 
         /* ПАНЕЛЬ БАЛАНСА */
         .top-bar {
             width: 100%;
-            display: flex;
-            justify-content: center;
-            padding: 25px 0 15px 0;
-            z-index: 10;
+            display: flex; justify-content: center;
+            padding: 20px 0;
         }
 
         .balance-item {
@@ -34,61 +32,74 @@
         }
 
         .star-box { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
-        .balance-text { color: white; font-weight: 800; font-size: 18px; margin: 0 4px; }
+        .balance-text { font-weight: 800; font-size: 18px; margin: 0 4px; }
         .plus-btn {
             background: #3b82f6; width: 24px; height: 24px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; border: none; padding: 0;
+            cursor: pointer; border: none;
         }
 
         /* ЭКРАНЫ */
         .screen {
             width: 90%;
             max-width: 400px;
-            display: none; /* По умолчанию скрыты */
+            display: none;
             flex-direction: column;
-            gap: 15px;
             margin-top: 10px;
         }
+        .active { display: flex; }
 
-        .active { display: flex; } /* Класс для текущего экрана */
-
-        /* КНОПКИ ГЛАВНОГО МЕНЮ */
+        /* ГЛАВНОЕ МЕНЮ */
         .game-btn {
             width: 100%; cursor: pointer; border-radius: 20px;
-            overflow: hidden; background: #1c253d;
-            transition: transform 0.1s;
+            overflow: hidden; margin-bottom: 15px;
         }
-        .game-btn:active { transform: scale(0.96); }
         .game-btn img { width: 100%; height: auto; display: block; }
 
-        /* ЭКРАН РУЛЕТКИ (КЕЙСЫ) */
+        /* ЭКРАН РУЛЕТКИ (СЕТКА КЕЙСОВ) */
+        .roulette-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px;
+        }
+        .close-btn { font-size: 24px; cursor: pointer; opacity: 0.7; }
+
         .cases-grid {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr 1fr; /* 2 колонки как на скрине */
             gap: 15px;
-            width: 100%;
         }
 
-        .case-slot {
-            background: #1c253d;
+        .case-card {
+            background: #2a2f3d; /* Цвет карточки со скрина */
             border-radius: 20px;
-            height: 100px;
+            padding: 15px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            border: 2px dashed rgba(255,255,255,0.1);
-            color: rgba(255,255,255,0.4);
-            font-weight: bold;
+            text-align: center;
+            position: relative;
         }
 
-        .back-btn {
-            color: #3b82f6;
-            font-weight: bold;
-            cursor: pointer;
+        .case-img {
+            width: 80%;
+            height: auto;
             margin-bottom: 10px;
-            display: inline-block;
+            min-height: 80px;
+            background: rgba(255,255,255,0.05); /* Заглушка под картинку */
+            border-radius: 10px;
         }
+
+        .case-name { font-size: 16px; font-weight: 600; margin-bottom: 10px; width: 100%; text-align: left; }
+
+        .case-price {
+            display: flex; align-items: center; gap: 5px;
+            align-self: flex-start;
+        }
+
+        /* Маленькая звезда в цене */
+        .price-star { width: 14px; height: 14px; }
+
+        .price-val { font-weight: bold; color: #ffca28; }
     </style>
 </head>
 <body>
@@ -96,16 +107,13 @@
     <div class="top-bar">
         <div class="balance-item">
             <div class="star-box">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                     <path d="M12 2L15 9H22L16.5 13.5L18.5 21L12 17L5.5 21L7.5 13.5L2 9H9L12 2Z" fill="#FFD700" stroke="#B8860B" stroke-width="1.5"/>
-                    <rect x="11" y="7" width="2" height="2" fill="white" fill-opacity="0.5"/>
                 </svg>
             </div>
             <span class="balance-text">125</span>
             <button class="plus-btn" onclick="alert('Магазин')">
-                <svg width="14" height="14" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M6 2V10M2 6H10" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-                </svg>
+                <svg width="14" height="14" viewBox="0 0 12 12" fill="none"><path d="M6 2V10M2 6H10" stroke="white" stroke-width="2.5" stroke-linecap="round"/></svg>
             </button>
         </div>
     </div>
@@ -120,24 +128,46 @@
     </div>
 
     <div id="roulette-screen" class="screen">
-        <span class="back-btn" onclick="openScreen('main-menu')">← Назад</span>
-        <h2 style="color: white; margin: 0;">Кейсы</h2>
+        <div class="roulette-header">
+            <h2 style="margin: 0;">Рулетка</h2>
+            <span class="close-btn" onclick="openScreen('main-menu')">✕</span>
+        </div>
+
         <div class="cases-grid">
-            <div class="case-slot">Место для кейса 1</div>
-            <div class="case-slot">Место для кейса 2</div>
-            <div class="case-slot">Место для кейса 3</div>
+            <div class="case-card">
+                <img src="case1.png" alt="" class="case-img" onerror="this.style.opacity='0.3'">
+                <div class="case-name">Bear</div>
+                <div class="case-price">
+                    <img src="star.png" class="price-star" alt="⭐" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1828/1828884.png'">
+                    <span class="price-val">199</span>
+                </div>
+            </div>
+
+            <div class="case-card">
+                <img src="case2.png" alt="" class="case-img" onerror="this.style.opacity='0.3'">
+                <div class="case-name">Player</div>
+                <div class="case-price">
+                    <img src="star.png" class="price-star" alt="⭐" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1828/1828884.png'">
+                    <span class="price-val">199</span>
+                </div>
+            </div>
+
+            <div class="case-card">
+                <img src="case3.png" alt="" class="case-img" onerror="this.style.opacity='0.3'">
+                <div class="case-name">Skull</div>
+                <div class="case-price">
+                    <img src="star.png" class="price-star" alt="⭐" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1828/1828884.png'">
+                    <span class="price-val">249</span>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Функция переключения экранов
         function openScreen(screenId) {
-            // Скрываем все экраны
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            // Показываем нужный
             document.getElementById(screenId).classList.add('active');
         }
     </script>
-
 </body>
 </html>
