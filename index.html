@@ -1,60 +1,160 @@
-<style>
-    /* Стиль карточки как на скрине */
-    .menu-card {
-        width: 100%;
-        height: 100px;
-        border-radius: 30px;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        padding: 0 20px;
-        position: relative;
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        cursor: pointer;
-        transition: transform 0.2s;
-    }
-    .menu-card:active { transform: scale(0.97); }
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NFT Mobile App</title>
+    <style>
+        /* Основные настройки под телефон */
+        body {
+            background-color: #000033; /* Твой темно-синий фон */
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden; /* Запрещаем скролл всего экрана, скроллить будем только контент */
+        }
 
-    /* Градиенты для карточек */
-    .card-roulette { background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%); }
-    .card-upgrade { background: linear-gradient(90deg, #d35400 0%, #e67e22 100%); }
+        /* Шапка со звездами */
+        .header {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .balance-badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 20px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-    .card-text {
-        margin-left: 20px;
-    }
-    .card-title {
-        font-size: 22px;
-        font-weight: bold;
-        display: block;
-    }
-    .card-subtitle {
-        font-size: 14px;
-        opacity: 0.7;
-    }
+        /* Основная область контента (скроллится) */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: 100px; /* Чтобы контент не перекрывался меню */
+        }
 
-    /* Иконка внутри карточки */
-    .card-icon {
-        width: 60px;
-        height: 60px;
-        object-fit: contain;
-    }
-</style>
+        /* Мобильные карточки (как на скрине) */
+        .card {
+            width: 100%;
+            height: 110px;
+            border-radius: 28px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            transition: transform 0.1s;
+            -webkit-tap-highlight-color: transparent; /* Убираем синюю рамку при нажатии на мобилках */
+        }
+        .card:active { transform: scale(0.96); }
 
-<div class="app-container">
-    
-    <div class="menu-card card-roulette" onclick="openRoulette()">
-        <img src="icon_gift.png" class="card-icon"> <div class="card-text">
-            <span class="card-title">Рулетка</span>
-            <span class="card-subtitle">14 кейсов</span>
+        /* Цвета карточек */
+        .card-roulette { background: linear-gradient(90deg, #1034a6 0%, #2a5298 100%); }
+        .card-upgrade { background: linear-gradient(90deg, #8e44ad 0%, #c0392b 100%); }
+
+        .card-icon-wrap {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card-icon-wrap img { width: 100%; height: 100%; object-fit: contain; }
+
+        .card-info { margin-left: 15px; }
+        .card-title { font-size: 24px; font-weight: 800; display: block; letter-spacing: 0.5px; }
+        .card-desc { font-size: 14px; opacity: 0.8; font-weight: 400; }
+
+        /* Нижнее навигационное меню (как на скрине) */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 75px;
+            background: rgba(15, 15, 30, 0.95);
+            backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: env(safe-area-inset-bottom); /* Поддержка челок iPhone */
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #666;
+            text-decoration: none;
+            font-size: 11px;
+            gap: 4px;
+        }
+        .nav-item.active { color: #47a1ff; }
+        .nav-icon { width: 28px; height: 28px; opacity: 0.6; }
+        .nav-item.active .nav-icon { opacity: 1; }
+
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="balance-badge">
+            <span style="color: #ffca28;">⭐</span>
+            <span>1,500</span>
         </div>
-    </div>
+    </header>
 
-    <div class="menu-card card-upgrade" onclick="openUpgrade()">
-        <img src="icon_up.png" class="card-icon"> <div class="card-text">
-            <span class="card-title">Апгрейд</span>
-            <span class="card-subtitle">Улучши вещи</span>
+    <main class="main-content">
+        
+        <div class="card card-roulette" onclick="console.log('Open Roulette')">
+            <div class="card-icon-wrap">
+                <img src="roulette_icon.png" alt="🎁">
+            </div>
+            <div class="card-info">
+                <span class="card-title">Рулетка</span>
+                <span class="card-desc">14 активных кейсов</span>
+            </div>
         </div>
-    </div>
 
-</div>
+        <div class="card card-upgrade" onclick="console.log('Open Upgrade')">
+            <div class="card-icon-wrap">
+                <img src="upgrade_icon.png" alt="⚡">
+            </div>
+            <div class="card-info">
+                <span class="card-title">Апгрейд</span>
+                <span class="card-desc">Шанс на успех 5%</span>
+            </div>
+        </div>
+
+    </main>
+
+    <nav class="nav-bar">
+        <div class="nav-item active">
+            <span style="font-size: 24px;">📦</span>
+            <span>Кейсы</span>
+        </div>
+        <div class="nav-item">
+            <span style="font-size: 24px;">⚡</span>
+            <span>Апгрейд</span>
+        </div>
+        <div class="nav-item">
+            <span style="font-size: 24px;">👤</span>
+            <span>Профиль</span>
+        </div>
+    </nav>
+
+</body>
+</html>
