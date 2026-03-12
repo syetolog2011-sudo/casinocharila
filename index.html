@@ -9,71 +9,52 @@
             background-color: #000033;
             margin: 0; padding: 0;
             display: flex; flex-direction: column;
-            align-items: center;
-            height: 100vh;
+            align-items: center; justify-content: center;
+            height: 100vh; overflow: hidden;
             font-family: sans-serif;
         }
 
-        .header { width: 100%; padding: 20px 0; display: flex; justify-content: center; }
-        
-        /* Рамка для отладки: если картинки нет, будет видно блок */
+        .menu-container {
+            width: 90%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
         .game-btn {
-            width: 85%;
-            max-width: 380px;
-            margin-bottom: 20px;
+            width: 100%;
             cursor: pointer;
             border-radius: 25px;
             overflow: hidden;
+            transition: transform 0.1s;
             background: rgba(255, 255, 255, 0.05);
-            min-height: 120px; /* Чтобы рамка была видна сразу */
-            border: 1px dashed rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            min-height: 100px;
+            -webkit-tap-highlight-color: transparent;
         }
+
+        .game-btn:active { transform: scale(0.96); }
 
         .game-btn img {
             width: 100%;
             height: auto;
             display: block;
         }
-
-        .game-btn:active { transform: scale(0.96); }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <img src="image_3afed4.png" style="width:110px;" alt="Баланс">
-    </div>
-
-    <div class="game-btn">
-        <img src="rulekta.png" alt="Рулетка" id="img-rulekta">
-    </div>
-
-    <div class="game-btn">
-        <img src="apgrade.png" alt="Апгрейд" id="img-apgrade">
-    </div>
-
-    <script>
-        // СКРИПТ-ПОМОЩНИК: Если картинка не нашлась, он попробует другие варианты имен
-        function checkImage(id, names) {
-            let img = document.getElementById(id);
-            let index = 0;
-            img.onerror = function() {
-                if (index < names.length) {
-                    console.log("Пробую другое имя для " + id + ": " + names[index]);
-                    this.src = names[index];
-                    index++;
-                }
-            };
-        }
-
-        // Проверяем Рулетку (английская и русская 'р', разные расширения)
-        checkImage('img-rulekta', ['rulekta.PNG', 'rulekta.jpg', 'Рулетка.png']);
+    <div class="menu-container">
         
-        // Проверяем Апгрейд (английская и русская 'а', 'u' вместо 'a')
-        checkImage('img-apgrade', ['apgrade.PNG', 'upgrade.png', 'Апгрейд.png', 'apgrade.png']);
-    </script>
+        <div class="game-btn" onclick="alert('Рулетка!')">
+            <img src="rulekta.png" alt="Рулетка">
+        </div>
+
+        <div class="game-btn" onclick="alert('Апгрейд!')">
+            <img src="ChatGPT Image 12 mar. 2026 г., 12_16_18.png" alt="Апгрейд">
+        </div>
+
+    </div>
+
 </body>
 </html>
