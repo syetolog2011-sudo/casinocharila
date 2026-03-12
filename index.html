@@ -1,79 +1,60 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NFT Game - Stage 2</title>
-    <style>
-        /* Устанавливаем твой фон */
-        body {
-            background-color: #000033; /* Тот самый глубокий синий */
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-family: -apple-system, system-ui, sans-serif;
-            color: white;
-            overflow: hidden;
-            box-sizing: border-box;
-        }
+<style>
+    /* Стиль карточки как на скрине */
+    .menu-card {
+        width: 100%;
+        height: 100px;
+        border-radius: 30px;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .menu-card:active { transform: scale(0.97); }
 
-        .app-container {
-            width: 100%;
-            max-width: 500px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-        }
+    /* Градиенты для карточек */
+    .card-roulette { background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%); }
+    .card-upgrade { background: linear-gradient(90deg, #d35400 0%, #e67e22 100%); }
 
-        /* Шапка со звездами (для ориентира) */
-        .top-bar {
-            width: 100%;
-            text-align: center;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 20px;
-        }
-        .stars-display {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ffca28; /* Золотой цвет */
-        }
+    .card-text {
+        margin-left: 20px;
+    }
+    .card-title {
+        font-size: 22px;
+        font-weight: bold;
+        display: block;
+    }
+    .card-subtitle {
+        font-size: 14px;
+        opacity: 0.7;
+    }
 
-        /* 🎰 ЗОНА РУЛЕТКИ КЕЙСОВ */
-        .roulette-section {
-            width: 100%;
-            height: 200px; /* Высота блока рулетки */
-            background: rgba(255, 255, 255, 0.05); /* Временный фон */
-            border: 2px dashed rgba(255, 255, 255, 0.2); /* Временная рамка */
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 30px;
-            text-align: center;
-        }
+    /* Иконка внутри карточки */
+    .card-icon {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+    }
+</style>
 
-        /* ⚡ ЗОНА АПГРЕЙДА */
-        .upgrade-section {
-            width: 100%;
-            flex: 1; /* Занимает оставшееся место */
-            background: rgba(255, 255, 255, 0.03); /* Временный фон */
-            border: 2px dashed rgba(255, 255, 255, 0.15); /* Временная рамка */
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            text-align: center;
-        }
+<div class="app-container">
+    
+    <div class="menu-card card-roulette" onclick="openRoulette()">
+        <img src="icon_gift.png" class="card-icon"> <div class="card-text">
+            <span class="card-title">Рулетка</span>
+            <span class="card-subtitle">14 кейсов</span>
+        </div>
+    </div>
 
-        /* Стиль для твоих будущих кнопок-картинок */
-        .img-btn {
-            cursor: pointer;
-            transition: transform 0.1s;
+    <div class="menu-card card-upgrade" onclick="openUpgrade()">
+        <img src="icon_up.png" class="card-icon"> <div class="card-text">
+            <span class="card-title">Апгрейд</span>
+            <span class="card-subtitle">Улучши вещи</span>
+        </div>
+    </div>
+
+</div>
