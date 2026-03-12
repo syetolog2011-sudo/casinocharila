@@ -35,11 +35,13 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        /* Твоя новая звезда */
-        .star-icon { 
-            width: 28px; 
-            height: 28px; 
-            object-fit: contain;
+        /* МОЯ ВСТРОЕННАЯ ПИКСЕЛЬНАЯ ЗВЕЗДА (SVG) */
+        .star-wrapper {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .balance-text { 
@@ -91,7 +93,20 @@
 
     <div class="top-bar">
         <div class="balance-item">
-            <img src="star.png" alt="star" class="star-icon"> 
+            <div class="star-wrapper">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="star-grad" x1="12" y1="2" x2="12" y2="22" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#FFEB3B"/>
+                            <stop offset="1" stop-color="#FF9800"/>
+                        </linearGradient>
+                    </defs>
+                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="url(#star-grad)" stroke="#BF360C" stroke-width="0.5"/>
+                    <circle cx="12" cy="10" r="1" fill="white" fill-opacity="0.8"/>
+                    <circle cx="16" cy="16" r="1.5" fill="white" fill-opacity="0.9"/>
+                </svg>
+            </div>
+            
             <span class="balance-text">125</span>
             
             <button class="plus-btn" onclick="alert('Магазин звезд')">
