@@ -13,20 +13,46 @@
             overflow: hidden;
         }
 
-        /* ПАНЕЛЬ БАЛАНСА */
-        .top-bar { width: 100%; display: flex; justify-content: center; padding: 20px 0; z-index: 100; position: relative; }
-        .balance-item {
-            background: #1c253d; border-radius: 25px; padding: 4px 10px 4px 8px;
-            display: flex; align-items: center; gap: 6px; height: 38px; border: 1px solid rgba(255,255,255,0.1);
+        /* ПАНЕЛЬ БАЛАНСА - ТЕПЕРЬ С КНОПКОЙ + */
+        .top-bar { 
+            width: 100%; 
+            display: flex; 
+            justify-content: center; 
+            padding: 20px 0; 
+            z-index: 1000; /* Чтобы была поверх всех окон */
+            position: relative;
         }
+
+        .balance-item {
+            background: #1c253d; 
+            border-radius: 25px; 
+            padding: 4px 10px 4px 8px;
+            display: flex; align-items: center; gap: 6px; 
+            height: 38px; 
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .star-img { width: 22px; height: 22px; object-fit: contain; }
         .balance-text { font-weight: 800; font-size: 18px; margin: 0 4px; }
-        .star-img { width: 20px; height: 20px; object-fit: contain; }
+
+        /* ТА САМАЯ КНОПКА ПОПОЛНЕНИЯ */
+        .plus-btn {
+            background: #3b82f6; 
+            width: 24px; 
+            height: 24px; 
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border: none; padding: 0;
+            transition: transform 0.1s;
+        }
+        .plus-btn:active { transform: scale(0.85); }
 
         /* ЭКРАНЫ */
         .screen { width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; position: absolute; top: 0; left: 0; padding-top: 80px; box-sizing: border-box; }
         .active { display: flex; }
 
-        /* ВЫБОР КЕЙСОВ */
+        /* ВЫБОР КЕЙСОВ (БЕЗ ТЕКСТА СНИЗУ) */
         .cases-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 90%; max-width: 400px; }
         .case-card { 
             background: #2a2f3d; border-radius: 20px; aspect-ratio: 1/1; 
@@ -47,16 +73,6 @@
         .nav-header { width: 90%; display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
         .close-btn { font-size: 24px; cursor: pointer; }
 
-        .drop-line { display: flex; gap: 10px; overflow-x: auto; padding: 20px; width: 100%; justify-content: flex-start; }
-        .drop-line::-webkit-scrollbar { display: none; }
-        .drop-item {
-            min-width: 80px; height: 80px; background: rgba(255,255,255,0.1);
-            border-radius: 15px; border: 1px solid rgba(255,255,255,0.2); flex-shrink: 0;
-        }
-
-        .pointer { width: 20px; height: 20px; background: white; clip-path: polygon(50% 100%, 0 0, 100% 0); margin-bottom: 5px; }
-        .pointer-bottom { width: 20px; height: 20px; background: white; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); margin-top: 5px; }
-
         .spin-btn {
             background: #3b82f6; width: 80%; max-width: 300px; padding: 15px;
             border-radius: 15px; border: none; color: white; font-weight: bold;
@@ -69,7 +85,14 @@
     <div class="top-bar">
         <div class="balance-item">
             <img src="star.png" class="star-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1828/1828884.png'">
+            
             <span class="balance-text" id="user-balance">125</span>
+            
+            <button class="plus-btn" onclick="alert('Магазин звезд')">
+                <svg width="14" height="14" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 2V10M2 6H10" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+            </button>
         </div>
     </div>
 
@@ -81,8 +104,8 @@
     </div>
 
     <div id="screen-cases" class="screen">
-        <div class="nav-header"><span class="close-btn" onclick="openScreen('screen-main')">✕</span><h2>Кейсы</h2><div></div></div>
-        <div class="cases-grid">
+        <div class="nav-header"><span class="close-btn" onclick="openScreen('screen-main')">✕</span><h2 style="margin:0">Кейсы</h2><div></div></div>
+        <div class="cases-grid" style="margin-top: 20px;">
             <div class="case-card" onclick="initSpin(7, 'Homeless', 149)"><img src="case1.webp"></div>
             <div class="case-card" onclick="initSpin(10, 'Rybkins', 349)"><img src="case2.webp"></div>
             <div class="case-card" onclick="initSpin(7, 'Crazy', 799)"><img src="case3.webp"></div>
@@ -93,17 +116,8 @@
         <div class="roulette-bg">
             <div class="nav-header" style="margin-top: 80px;">
                 <span class="close-btn" onclick="openScreen('screen-cases')">✕ Назад</span>
-                <h3 id="case-title">Кейс</h3>
+                <h3 id="case-title" style="margin:0">Кейс</h3>
                 <div></div>
-            </div>
-            <div style="margin-top: 50px; display: flex; flex-direction: column; align-items: center; width: 100%;">
-                <div class="pointer"></div>
-                <div class="drop-container" id="drop-line" class="drop-line" style="display:flex; gap:10px; width:100%; overflow:hidden; justify-content:center;">
-                    <div class="drop-item"></div>
-                    <div class="drop-item" style="border-color: gold;"></div>
-                    <div class="drop-item"></div>
-                </div>
-                <div class="pointer-bottom"></div>
             </div>
             <button class="spin-btn" id="spin-button" onclick="handleSpin()">Крутить за ⭐ 0</button>
         </div>
@@ -129,10 +143,7 @@
             if (currentBalance >= currentPrice) {
                 currentBalance -= currentPrice;
                 document.getElementById('user-balance').innerText = currentBalance;
-                alert('Погнали! (Анимация крутки будет тут)');
-            } else {
-                // Если звезд не хватает — просто ничего не происходит, как ты и просил.
-                return; 
+                // Тут будет запуск анимации
             }
         }
     </script>
