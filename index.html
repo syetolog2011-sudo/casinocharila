@@ -11,12 +11,12 @@
             width: 100%; height: 100%;
             display: flex; flex-direction: column;
             align-items: center;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: sans-serif;
             -webkit-user-select: none;
             color: white;
         }
 
-        /* ПАНЕЛЬ БАЛАНСА */
+        /* ПАНЕЛЬ БАЛАНСА (ОБЩАЯ) */
         .top-bar {
             width: 100%;
             display: flex; justify-content: center;
@@ -36,7 +36,7 @@
         .plus-btn {
             background: #3b82f6; width: 24px; height: 24px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; border: none;
+            cursor: pointer; border: none; padding: 0;
         }
 
         /* ЭКРАНЫ */
@@ -49,14 +49,14 @@
         }
         .active { display: flex; }
 
-        /* ГЛАВНОЕ МЕНЮ */
+        /* КНОПКИ ГЛАВНОГО МЕНЮ */
         .game-btn {
             width: 100%; cursor: pointer; border-radius: 20px;
             overflow: hidden; margin-bottom: 15px;
         }
         .game-btn img { width: 100%; height: auto; display: block; }
 
-        /* ЭКРАН РУЛЕТКИ (СЕТКА КЕЙСОВ) */
+        /* ЭКРАН РУЛЕТКИ (СЕТКА ЧИСТЫХ КЕЙСОВ) */
         .roulette-header {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 20px;
@@ -65,41 +65,37 @@
 
         .cases-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 колонки как на скрине */
+            grid-template-columns: 1fr 1fr; /* 2 колонки */
             gap: 15px;
         }
 
         .case-card {
             background: #2a2f3d; /* Цвет карточки со скрина */
             border-radius: 20px;
-            padding: 15px;
+            padding: 10px;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            text-align: center;
+            justify-content: center;
             position: relative;
+            overflow: hidden;
+            aspect-ratio: 1 / 1; /* Квадратные карточки */
+            cursor: pointer;
         }
 
         .case-img {
-            width: 80%;
-            height: auto;
-            margin-bottom: 10px;
-            min-height: 80px;
-            background: rgba(255,255,255,0.05); /* Заглушка под картинку */
-            border-radius: 10px;
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+            /* Если картинка .webp ещё не загрузилась */
+            onerror: "this.style.display='none'"; 
         }
 
-        .case-name { font-size: 16px; font-weight: 600; margin-bottom: 10px; width: 100%; text-align: left; }
-
-        .case-price {
-            display: flex; align-items: center; gap: 5px;
-            align-self: flex-start;
+        /* Показывает текст, если картинка ещё не загрузилась */
+        .case-card span {
+            position: absolute;
+            color: rgba(255,255,255,0.2);
+            font-size: 14px;
         }
-
-        /* Маленькая звезда в цене */
-        .price-star { width: 14px; height: 14px; }
-
-        .price-val { font-weight: bold; color: #ffca28; }
     </style>
 </head>
 <body>
@@ -135,30 +131,18 @@
 
         <div class="cases-grid">
             <div class="case-card">
-                <img src="case1.webp" alt="" class="case-img" onerror="this.style.opacity='0.3'">
-                <div class="case-name">Bear</div>
-                <div class="case-price">
-                    <img src="star.png" class="price-star" alt="⭐" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1828/1828884.png'">
-                    <span class="price-val">199</span>
-                </div>
+                <img src="case1.webp" alt="" class="case-img" onerror="this.nextSibling.style.display='block';this.style.display='none'">
+                <span style="display:none">Кейс 1</span>
             </div>
 
             <div class="case-card">
-                <img src="case2.png" alt="" class="case-img" onerror="this.style.opacity='0.3'">
-                <div class="case-name">Player</div>
-                <div class="case-price">
-                    <img src="star.png" class="price-star" alt="⭐" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1828/1828884.png'">
-                    <span class="price-val">199</span>
-                </div>
+                <img src="case1.webp" alt="" class="case-img" onerror="this.nextSibling.style.display='block';this.style.display='none'">
+                <span style="display:none">Кейс 2</span>
             </div>
 
             <div class="case-card">
-                <img src="case3.png" alt="" class="case-img" onerror="this.style.opacity='0.3'">
-                <div class="case-name">Skull</div>
-                <div class="case-price">
-                    <img src="star.png" class="price-star" alt="⭐" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1828/1828884.png'">
-                    <span class="price-val">249</span>
-                </div>
+                <img src="case1.webp" alt="" class="case-img" onerror="this.nextSibling.style.display='block';this.style.display='none'">
+                <span style="display:none">Кейс 3</span>
             </div>
         </div>
     </div>
