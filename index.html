@@ -16,7 +16,7 @@
             color: white;
         }
 
-        /* ПАНЕЛЬ БАЛАНСА (ОБЩАЯ) */
+        /* ПАНЕЛЬ БАЛАНСА */
         .top-bar {
             width: 100%;
             display: flex; justify-content: center;
@@ -56,7 +56,7 @@
         }
         .game-btn img { width: 100%; height: auto; display: block; }
 
-        /* ЭКРАН РУЛЕТКИ (СЕТКА ЧИСТЫХ КЕЙСОВ) */
+        /* ЭКРАН РУЛЕТКИ */
         .roulette-header {
             display: flex; justify-content: space-between; align-items: center;
             margin-bottom: 20px;
@@ -65,36 +65,27 @@
 
         .cases-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 колонки */
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
         }
 
+        /* КАРТОЧКА НА ВСЕ ОКНО */
         .case-card {
-            background: #2a2f3d; /* Цвет карточки со скрина */
+            background: #2a2f3d;
             border-radius: 20px;
-            padding: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            overflow: hidden;
-            aspect-ratio: 1 / 1; /* Квадратные карточки */
+            overflow: hidden; /* Чтобы картинка не вылазила за скругления */
+            aspect-ratio: 1 / 1;
             cursor: pointer;
+            padding: 0; /* Убрал отступы, чтобы картинка была на всё окно */
         }
 
         .case-img {
-            width: 90%;
-            height: 90%;
-            object-fit: contain;
-            /* Если картинка .webp ещё не загрузилась */
-            onerror: "this.style.display='none'"; 
-        }
-
-        /* Показывает текст, если картинка ещё не загрузилась */
-        .case-card span {
-            position: absolute;
-            color: rgba(255,255,255,0.2);
-            font-size: 14px;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Растягивает картинку на всю площадь */
         }
     </style>
 </head>
@@ -131,18 +122,13 @@
 
         <div class="cases-grid">
             <div class="case-card">
-                <img src="case1.webp" alt="" class="case-img" onerror="this.nextSibling.style.display='block';this.style.display='none'">
-                <span style="display:none">Кейс 1</span>
+                <img src="case1.webp" alt="Кейс 1" class="case-img">
             </div>
-
             <div class="case-card">
-                <img src="case1.webp" alt="" class="case-img" onerror="this.nextSibling.style.display='block';this.style.display='none'">
-                <span style="display:none">Кейс 2</span>
+                <img src="case1.webp" alt="Кейс 2" class="case-img">
             </div>
-
             <div class="case-card">
-                <img src="case1.webp" alt="" class="case-img" onerror="this.nextSibling.style.display='block';this.style.display='none'">
-                <span style="display:none">Кейс 3</span>
+                <img src="case1.webp" alt="Кейс 3" class="case-img">
             </div>
         </div>
     </div>
