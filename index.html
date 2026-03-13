@@ -14,7 +14,7 @@
         }
 
         /* ПАНЕЛЬ БАЛАНСА */
-        .top-bar { width: 100%; display: flex; justify-content: center; padding: 20px 0; z-index: 100; }
+        .top-bar { width: 100%; display: flex; justify-content: center; padding: 20px 0; z-index: 100; position: relative; }
         .balance-item {
             background: #1c253d; border-radius: 25px; padding: 4px 10px 4px 8px;
             display: flex; align-items: center; gap: 6px; height: 38px; border: 1px solid rgba(255,255,255,0.1);
@@ -31,24 +31,24 @@
         .game-btn img { width: 100%; height: auto; display: block; }
 
         .cases-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 90%; max-width: 400px; }
-        .case-card { background: #2a2f3d; border-radius: 20px; aspect-ratio: 1/1; overflow: hidden; cursor: pointer; }
+        .case-card-wrapper { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .case-card { background: #2a2f3d; border-radius: 20px; aspect-ratio: 1/1; overflow: hidden; cursor: pointer; width: 100%; }
         .case-card img { width: 100%; height: 100%; object-fit: cover; }
+        .case-label { font-weight: bold; font-size: 14px; color: #aaa; }
 
-        /* ИНТЕРФЕЙС КРУТИЛКИ (КАК НА СКРИНЕ) */
+        /* ИНТЕРФЕЙС КРУТИЛКИ */
         .roulette-bg {
             background: radial-gradient(circle, #1a56db 0%, #02132f 100%);
             width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center;
         }
         
-        .nav-header { width: 90%; display: flex; justify-content: space-between; padding: 10px 0; }
+        .nav-header { width: 90%; display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
         .close-btn { font-size: 24px; cursor: pointer; }
 
-        /* Лента дропа */
         .drop-line {
             display: flex; gap: 10px; overflow-x: auto; padding: 20px; width: 100%;
             justify-content: flex-start; scroll-behavior: smooth;
         }
-        /* Скрываем скроллбар */
         .drop-line::-webkit-scrollbar { display: none; }
 
         .drop-item {
@@ -61,12 +61,10 @@
         .pointer { width: 20px; height: 20px; background: white; clip-path: polygon(50% 100%, 0 0, 100% 0); margin-bottom: 5px; }
         .pointer-bottom { width: 20px; height: 20px; background: white; clip-path: polygon(50% 0%, 0% 100%, 100% 100%); margin-top: 5px; }
 
-        /* Кнопка крутить */
         .spin-btn {
             background: #3b82f6; width: 80%; max-width: 300px; padding: 15px;
             border-radius: 15px; border: none; color: white; font-weight: bold;
             font-size: 18px; cursor: pointer; margin-top: auto; margin-bottom: 50px;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.5);
         }
     </style>
 </head>
@@ -88,9 +86,18 @@
     <div id="screen-cases" class="screen">
         <div class="nav-header"><span class="close-btn" onclick="openScreen('screen-main')">✕</span><h2>Кейсы</h2><div></div></div>
         <div class="cases-grid">
-            <div class="case-card" onclick="initSpin(7, 'Кейс 1')"><img src="case1.webp"></div>
-            <div class="case-card" onclick="initSpin(10, 'Кейс 2')"><img src="case2.webp"></div>
-            <div class="case-card" onclick="initSpin(7, 'Кейс 3')"><img src="case3.webp"></div>
+            <div class="case-card-wrapper">
+                <div class="case-card" onclick="initSpin(7, 'Homeless')"><img src="case1.webp"></div>
+                <span class="case-label">Homeless</span>
+            </div>
+            <div class="case-card-wrapper">
+                <div class="case-card" onclick="initSpin(10, 'Rybkins')"><img src="case2.webp"></div>
+                <span class="case-label">Rybkins</span>
+            </div>
+            <div class="case-card-wrapper">
+                <div class="case-card" onclick="initSpin(7, 'Crazy')"><img src="case3.webp"></div>
+                <span class="case-label">Crazy</span>
+            </div>
         </div>
     </div>
 
@@ -104,12 +111,11 @@
 
             <div style="margin-top: 50px; display: flex; flex-direction: column; align-items: center; width: 100%;">
                 <div class="pointer"></div>
-                <div class="drop-line" id="drop-container">
-                    </div>
+                <div class="drop-line" id="drop-container"></div>
                 <div class="pointer-bottom"></div>
             </div>
 
-            <button class="spin-btn" onclick="alert('Крутим...')">Крутить за ⭐ 199</button>
+            <button class="spin-btn" id="spin-main-button">Крутить за ⭐ 199</button>
         </div>
     </div>
 
@@ -122,14 +128,20 @@
         function initSpin(count, title) {
             document.getElementById('case-title').innerText = title;
             const container = document.getElementById('drop-container');
-            container.innerHTML = ''; // Очистка
+            container.innerHTML = ''; 
 
             for (let i = 1; i <= count; i++) {
                 const item = document.createElement('div');
                 item.className = 'drop-item';
-                item.innerText = 'Дроп ' + i;
+                item.innerText = 'Item ' + i;
                 container.appendChild(item);
             }
+
+            // Настройка цены в зависимости от названия (если нужно)
+            const btn = document.getElementById('spin-main-button');
+            if(title === 'Rybkins') btn.innerText = 'Крутить за ⭐ 299';
+            else btn.innerText = 'Крутить за ⭐ 199';
+
             openScreen('screen-spin');
         }
     </script>
