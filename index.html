@@ -6,168 +6,173 @@
             <div></div>
         </div>
 
-        <div class="crash-area" id="crash-area">
-            <div class="multiplier" id="crash-mult">1.00x</div>
-            
-            <video id="rocket" class="rocket-img" autoplay loop muted playsinline>
-                <source src="13878839675461.mp4" type="video/mp4">
-            </video>
-            
-            <canvas id="crash-canvas"></canvas>
+        <div class="crash-main-area">
+            <div class="rocket-wrapper">
+                <video id="rocket-video" class="rocket-static" autoplay loop muted playsinline>
+                    <source src="13878839675461.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <div class="crash-info">
+                <div class="multiplier-display" id="crash-mult">1.00x</div>
+            </div>
         </div>
 
         <div class="crash-controls">
-            <button class="spin-btn" id="crash-btn" onclick="startCrash()">ВЗЛЕТ</button>
+            <div class="bet-input-group">
+                <input type="number" id="crash-bet" value="10" min="1">
+                <button class="spin-btn" id="crash-btn" onclick="startCrash()">СТАВКА</button>
+            </div>
         </div>
     </div>
 </div>
 
 <style>
-    /* Стили для Краша */
     .crash-container {
         width: 100%; height: 100%;
-        /* Новый фон, как ты просил */
-        background: #1f0e00; 
+        background: #1f0e00; /* Твой фон */
         display: flex; flex-direction: column; align-items: center;
     }
 
-    .crash-area {
-        width: 90%; height: 320px;
-        margin-top: 20px;
-        position: relative;
-        /* Отводим место под оси */
-        padding-left: 20px; padding-bottom: 20px; 
-        overflow: hidden;
+    .crash-main-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
     }
 
-    .multiplier {
-        position: absolute; top: 10px; width: 100%;
-        text-align: center; font-size: 40px; font-weight: bold;
-        color: #ff9f43; text-shadow: 0 0 15px rgba(255,159,67,0.5);
-        z-index: 10;
+    /* Обертка для ракеты, чтобы она стояла на месте */
+    .rocket-wrapper {
+        width: 120px;
+        height: 120px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
     }
 
-    /* УМЕНЬШЕННАЯ И В ЦЕНТРЕ */
-    .rocket-img {
-        position: absolute;
-        bottom: 30px; /* Над осью X */
-        left: 50%; /* Строго посередине */
-        transform: translateX(-50%); /* Компенсируем ширину для центрирования */
-        
-        width: 60px; height: 60px; /* Уменьшили до 60px */
-        z-index: 5;
-        
-        /* Анимация: Вращение + Вибрация */
-        animation: fly-and-spin 1s infinite linear;
-        
-        /* Плавный полет по координатам */
-        transition: bottom 0.1s linear, left 0.1s linear, transform 0.1s linear;
-        
-        /* Убрать черный фон видео (если есть) */
-        mix-blend-mode: screen; 
+    .rocket-static {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        /* Только эффект вибрации, без перемещения */
+        animation: rocket-vibration 0.1s infinite alternate;
+        mix-blend-mode: screen;
     }
 
-    /* Анимация: Ракета крутится и трясется */
-    @keyframes fly-and-spin {
-        0% { transform: translateX(-50%) rotate(0deg) translate(0, 0); }
-        50% { transform: translateX(-50%) rotate(180deg) translate(2px, -2px); }
-        100% { transform: translateX(-50%) rotate(360deg) translate(0, 0); }
+    /* Эффект дрожания двигателя */
+    @keyframes rocket-vibration {
+        from { transform: translateY(0) scale(1); }
+        to { transform: translateY(-2px) scale(1.02); }
     }
 
-    /* Сетка графика (концепт) */
-    #crash-canvas {
-        position: absolute; top: 0; left: 0;
-        width: 100%; height: 100%;
-        border-left: 2px solid rgba(255,255,255,0.2);
-        border-bottom: 2px solid rgba(255,255,255,0.2);
+    .multiplier-display {
+        font-size: 64px;
+        font-weight: 900;
+        color: #ff9f43;
+        text-shadow: 0 0 30px rgba(255, 159, 67, 0.4);
+        font-family: 'Courier New', Courier, monospace;
     }
 
-    .crash-controls { width: 100%; display: flex; justify-content: center; margin-top: auto; margin-bottom: 50px; }
+    .crash-controls {
+        width: 100%;
+        padding-bottom: 60px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .bet-input-group {
+        width: 80%;
+        display: flex;
+        gap: 10px;
+    }
+
+    #crash-bet {
+        background: #2a1500;
+        border: 1px solid #ff9f43;
+        border-radius: 12px;
+        color: white;
+        padding: 10px;
+        width: 80px;
+        font-size: 18px;
+        text-align: center;
+    }
+
+    .spin-btn {
+        flex: 1;
+        background: #ff9f43;
+        border: none;
+        border-radius: 12px;
+        color: #1f0e00;
+        font-weight: bold;
+        font-size: 18px;
+        cursor: pointer;
+    }
 </style>
 
 <script>
-    let crashInterval;
-    let currentMult = 1.00;
-    let isFlying = false;
-
-    // Отрисовка концепта графика (осей и времени)
-    function drawGrid() {
-        const canvas = document.getElementById('crash-canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = canvas.parentElement.offsetWidth;
-        canvas.height = canvas.parentElement.offsetHeight;
-        
-        ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-        ctx.fillStyle = 'rgba(255,255,255,0.5)';
-        ctx.font = '10px Arial';
-        
-        // Вертикальная ось Y (Multiplier)
-        for (let y = 0; y < canvas.height; y += 40) {
-            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(10, y); ctx.stroke();
-        }
-        
-        // Горизонтальная ось X (Time)
-        for (let x = 0; x < canvas.width; x += 40) {
-            ctx.beginPath(); ctx.moveTo(x, canvas.height); ctx.lineTo(x, canvas.height - 10); ctx.stroke();
-            if(x > 0 && x % 80 === 0) ctx.fillText((x/40) + 's', x-5, canvas.height-15);
-        }
-    }
-    
-    // Вызвать один раз при загрузке
-    drawGrid();
+    let crashActive = false;
+    let crashVal = 1.00;
+    let crashTimer;
 
     function startCrash() {
-        if (isFlying) return;
-        
-        isFlying = true;
-        currentMult = 1.00;
-        const rocket = document.getElementById('rocket');
-        const multText = document.getElementById('crash-mult');
+        if (crashActive) return;
+
+        // Проверка баланса (используем твой баланс из прошлых шагов)
+        let bet = parseInt(document.getElementById('crash-bet').value);
+        if (currentBalance < bet) return; 
+
+        currentBalance -= bet;
+        document.getElementById('user-balance').innerText = currentBalance;
+
+        crashActive = true;
+        crashVal = 1.00;
         const btn = document.getElementById('crash-btn');
+        const display = document.getElementById('crash-mult');
         
-        // Сброс позиции в центр снизу
-        rocket.style.bottom = '30px';
-        rocket.style.left = '50%';
-        // Убираем смещение translateX для полета
-        rocket.style.transform = 'none'; 
-        
-        multText.style.color = '#ff9f43';
-        btn.innerText = 'ВЗЛЕТ';
+        btn.innerText = 'ЗАБРАТЬ';
+        btn.style.background = '#4cd137'; // Зеленая кнопка во время полета
+        btn.onclick = cashOut;
 
-        crashInterval = setInterval(() => {
-            currentMult += 0.01;
-            multText.innerText = currentMult.toFixed(2) + 'x';
+        crashTimer = setInterval(() => {
+            // Скорость роста иксов
+            crashVal += 0.01 + (crashVal * 0.002); 
+            display.innerText = crashVal.toFixed(2) + 'x';
 
-            // Двигаем ракету вверх и чуть вправо по кривой
-            let up = (currentMult - 1) * 35; // Вверх
-            let right = (currentMult - 1) * 15; // Вправо
-            
-            if (up < 260) {
-                rocket.style.bottom = (30 + up) + 'px';
-                rocket.style.left = (50 + right) + '%';
-            }
-
-            // Шанс взрыва
-            if (Math.random() < 0.012) {
-                stopCrash();
+            // Шанс "краша"
+            if (Math.random() < 0.015) {
+                boom();
             }
         }, 100);
     }
 
-    function stopCrash() {
-        clearInterval(crashInterval);
-        isFlying = false;
-        const multText = document.getElementById('crash-mult');
+    function cashOut() {
+        if (!crashActive) return;
+        
+        let win = Math.floor(parseInt(document.getElementById('crash-bet').value) * crashVal);
+        currentBalance += win;
+        document.getElementById('user-balance').innerText = currentBalance;
+        
+        resetCrash('ВЫИГРЫШ!');
+    }
+
+    function boom() {
+        resetCrash('BOOM!');
+        document.getElementById('crash-mult').style.color = '#ff4d4d';
+    }
+
+    function resetCrash(msg) {
+        clearInterval(crashTimer);
+        crashActive = false;
         const btn = document.getElementById('crash-btn');
-        const rocket = document.getElementById('rocket');
+        btn.innerText = 'СТАВКА';
+        btn.style.background = '#ff9f43';
+        btn.onclick = startCrash;
         
-        multText.style.color = '#ff4d4d'; 
-        multText.innerText = 'BOOM! ' + currentMult.toFixed(2) + 'x';
-        btn.innerText = 'ВЗЛЕТ';
-        
-        // При взрыве ракета падает вниз
-        rocket.style.bottom = '10px';
-        rocket.style.left = '50%';
-        rocket.style.transform = 'translateX(-50%)';
+        setTimeout(() => {
+            document.getElementById('crash-mult').style.color = '#ff9f43';
+        }, 2000);
     }
 </script>
