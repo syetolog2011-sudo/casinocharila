@@ -1,9 +1,173 @@
-<div class="crash-area" id="crash-area">
-    <div class="multiplier" id="crash-mult">1.00x</div>
-    
-    <video id="rocket" class="rocket-img" autoplay loop muted playsinline>
-        <source src="13878839675461.mp4" type="video/mp4">
-    </video>
-    
-    <canvas id="crash-canvas"></canvas>
+<div id="screen-crash" class="screen" style="padding-top: 0;">
+    <div class="crash-container">
+        <div class="nav-header" style="margin-top: 80px;">
+            <span class="close-btn" onclick="openScreen('screen-main')">✕ Выход</span>
+            <h3 style="margin:0">Crash Game</h3>
+            <div></div>
+        </div>
+
+        <div class="crash-area" id="crash-area">
+            <div class="multiplier" id="crash-mult">1.00x</div>
+            
+            <video id="rocket" class="rocket-img" autoplay loop muted playsinline>
+                <source src="13878839675461.mp4" type="video/mp4">
+            </video>
+            
+            <canvas id="crash-canvas"></canvas>
+        </div>
+
+        <div class="crash-controls">
+            <button class="spin-btn" id="crash-btn" onclick="startCrash()">ВЗЛЕТ</button>
+        </div>
+    </div>
 </div>
+
+<style>
+    /* Стили для Краша */
+    .crash-container {
+        width: 100%; height: 100%;
+        /* Новый фон, как ты просил */
+        background: #1f0e00; 
+        display: flex; flex-direction: column; align-items: center;
+    }
+
+    .crash-area {
+        width: 90%; height: 320px;
+        margin-top: 20px;
+        position: relative;
+        /* Отводим место под оси */
+        padding-left: 20px; padding-bottom: 20px; 
+        overflow: hidden;
+    }
+
+    .multiplier {
+        position: absolute; top: 10px; width: 100%;
+        text-align: center; font-size: 40px; font-weight: bold;
+        color: #ff9f43; text-shadow: 0 0 15px rgba(255,159,67,0.5);
+        z-index: 10;
+    }
+
+    /* УМЕНЬШЕННАЯ И В ЦЕНТРЕ */
+    .rocket-img {
+        position: absolute;
+        bottom: 30px; /* Над осью X */
+        left: 50%; /* Строго посередине */
+        transform: translateX(-50%); /* Компенсируем ширину для центрирования */
+        
+        width: 60px; height: 60px; /* Уменьшили до 60px */
+        z-index: 5;
+        
+        /* Анимация: Вращение + Вибрация */
+        animation: fly-and-spin 1s infinite linear;
+        
+        /* Плавный полет по координатам */
+        transition: bottom 0.1s linear, left 0.1s linear, transform 0.1s linear;
+        
+        /* Убрать черный фон видео (если есть) */
+        mix-blend-mode: screen; 
+    }
+
+    /* Анимация: Ракета крутится и трясется */
+    @keyframes fly-and-spin {
+        0% { transform: translateX(-50%) rotate(0deg) translate(0, 0); }
+        50% { transform: translateX(-50%) rotate(180deg) translate(2px, -2px); }
+        100% { transform: translateX(-50%) rotate(360deg) translate(0, 0); }
+    }
+
+    /* Сетка графика (концепт) */
+    #crash-canvas {
+        position: absolute; top: 0; left: 0;
+        width: 100%; height: 100%;
+        border-left: 2px solid rgba(255,255,255,0.2);
+        border-bottom: 2px solid rgba(255,255,255,0.2);
+    }
+
+    .crash-controls { width: 100%; display: flex; justify-content: center; margin-top: auto; margin-bottom: 50px; }
+</style>
+
+<script>
+    let crashInterval;
+    let currentMult = 1.00;
+    let isFlying = false;
+
+    // Отрисовка концепта графика (осей и времени)
+    function drawGrid() {
+        const canvas = document.getElementById('crash-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = canvas.parentElement.offsetWidth;
+        canvas.height = canvas.parentElement.offsetHeight;
+        
+        ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.font = '10px Arial';
+        
+        // Вертикальная ось Y (Multiplier)
+        for (let y = 0; y < canvas.height; y += 40) {
+            ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(10, y); ctx.stroke();
+        }
+        
+        // Горизонтальная ось X (Time)
+        for (let x = 0; x < canvas.width; x += 40) {
+            ctx.beginPath(); ctx.moveTo(x, canvas.height); ctx.lineTo(x, canvas.height - 10); ctx.stroke();
+            if(x > 0 && x % 80 === 0) ctx.fillText((x/40) + 's', x-5, canvas.height-15);
+        }
+    }
+    
+    // Вызвать один раз при загрузке
+    drawGrid();
+
+    function startCrash() {
+        if (isFlying) return;
+        
+        isFlying = true;
+        currentMult = 1.00;
+        const rocket = document.getElementById('rocket');
+        const multText = document.getElementById('crash-mult');
+        const btn = document.getElementById('crash-btn');
+        
+        // Сброс позиции в центр снизу
+        rocket.style.bottom = '30px';
+        rocket.style.left = '50%';
+        // Убираем смещение translateX для полета
+        rocket.style.transform = 'none'; 
+        
+        multText.style.color = '#ff9f43';
+        btn.innerText = 'ВЗЛЕТ';
+
+        crashInterval = setInterval(() => {
+            currentMult += 0.01;
+            multText.innerText = currentMult.toFixed(2) + 'x';
+
+            // Двигаем ракету вверх и чуть вправо по кривой
+            let up = (currentMult - 1) * 35; // Вверх
+            let right = (currentMult - 1) * 15; // Вправо
+            
+            if (up < 260) {
+                rocket.style.bottom = (30 + up) + 'px';
+                rocket.style.left = (50 + right) + '%';
+            }
+
+            // Шанс взрыва
+            if (Math.random() < 0.012) {
+                stopCrash();
+            }
+        }, 100);
+    }
+
+    function stopCrash() {
+        clearInterval(crashInterval);
+        isFlying = false;
+        const multText = document.getElementById('crash-mult');
+        const btn = document.getElementById('crash-btn');
+        const rocket = document.getElementById('rocket');
+        
+        multText.style.color = '#ff4d4d'; 
+        multText.innerText = 'BOOM! ' + currentMult.toFixed(2) + 'x';
+        btn.innerText = 'ВЗЛЕТ';
+        
+        // При взрыве ракета падает вниз
+        rocket.style.bottom = '10px';
+        rocket.style.left = '50%';
+        rocket.style.transform = 'translateX(-50%)';
+    }
+</script>
