@@ -3,289 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Crash Star Pro (Mobile)</title>
+    <title>Crash Star Lite</title>
     <style>
-        /* СТИЛЬ ТОЛЬКО ДЛЯ МОБИЛЬНЫХ (ТЕЛЕГРАМ БОТ) */
         body, html {
             margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #000; font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: #000; font-family: 'Segoe UI', sans-serif;
             color: white; overflow: hidden; display: flex; flex-direction: column;
         }
 
-        /* ЧЕРНЫЙ ИГРОВОЙ ЭКРАН (ВЕРХ) */
-        .game-screen {
+        .game-section {
             flex: 1; position: relative; background: #000;
-            display: flex; flex-direction: column; align-items: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
         }
 
-        /* СВЕЧЕНИЕ КОСМОСА */
-        .space-glow {
-            position: absolute; top: 0; width: 100%; height: 60%;
-            background: radial-gradient(circle at top, #2b0a4d 0%, #000000 70%);
-            z-index: 1; pointer-events: none;
+        .multiplier-container { text-align: center; z-index: 5; }
+        .multiplier { font-size: 80px; font-weight: 900; }
+        .status-text { color: #ff4d4d; font-size: 24px; font-weight: bold; margin-top: 10px; display: none; }
+
+        .rocket-box { width: 180px; height: 180px; z-index: 4; display: none; }
+        .rocket-box video { width: 100%; height: 100%; object-fit: contain; }
+
+        /* ЦЕНТРАЛЬНАЯ ПОЛОСА ОЖИДАНИЯ */
+        .wait-container { width: 70%; text-align: center; z-index: 6; }
+        .progress-bar { width: 100%; height: 8px; background: #222; border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
+        .progress-fill { width: 0%; height: 100%; background: #a347ff; }
+
+        /* ПАНЕЛЬ УПРАВЛЕНИЯ */
+        .controls-section {
+            background: #111; border-top: 1px solid #222;
+            padding: 25px 20px 40px; z-index: 10;
         }
 
-        /* HEADER */
-        .header { width: 100%; padding: 15px; box-sizing: border-box; z-index: 10; display: flex; justify-content: space-between; align-items: center; }
-        .user-block { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #aaa; }
-        .balance-block { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.05); padding: 6px 15px; border-radius: 20px; font-weight: bold; }
-        .star-token { color: #ffcc00; }
-
-        /* ИСТОРИЯ */
-        .history-bar { display: flex; gap: 8px; padding: 0 15px 15px; z-index: 10; width: 100%; box-sizing: border-box; justify-content: center; }
-        .hist-item { background: #111; padding: 5px 12px; border-radius: 8px; font-size: 12px; color: #666; border: 1px solid #222; }
-
-        /* ЦЕНТР (ИКСЫ И РАКЕТА) */
-        .main-display {
-            flex: 1; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; z-index: 5;
-            position: relative; width: 100%;
+        .main-btn {
+            width: 100%; padding: 20px; border-radius: 16px; border: none;
+            font-size: 20px; font-weight: bold; color: white;
+            background: #6a11cb; margin-bottom: 20px; cursor: pointer;
         }
+        .btn-green { background: #4cd137 !important; color: #000; }
+        .btn-gray { background: #333 !important; cursor: not-allowed; }
 
-        .multiplier {
-            font-size: 72px; font-weight: 900; margin-bottom: 20px;
-            text-shadow: 0 0 25px rgba(163, 71, 255, 0.7);
+        .settings-grid { display: flex; flex-direction: column; gap: 12px; }
+        .input-box {
+            background: #1a1a1a; border-radius: 12px; padding: 12px 15px;
+            display: flex; align-items: center; gap: 10px;
         }
+        .input-box input { background: transparent; border: none; color: white; font-size: 18px; width: 80px; outline: none; }
+        
+        .balance-display { text-align: center; margin-bottom: 15px; font-size: 18px; color: #ffcc00; font-weight: bold; }
 
-        .rocket-frame {
-            width: 160px; height: 160px;
-            animation: bounce 2.5s infinite ease-in-out;
-        }
-        .rocket-frame video { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: screen; }
-
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
-
-        /* СЕТКА (FLOOR) */
-        .grid-floor {
-            position: absolute; bottom: 0; width: 200%; height: 35%;
-            background-image: linear-gradient(rgba(94, 53, 177, 0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(94, 53, 177, 0.2) 1px, transparent 1px);
-            background-size: 50px 50px; transform: rotateX(70deg); transform-origin: bottom; left: -50%; z-index: 1;
-            mask-image: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0));
-        }
-
-        /* ТЕМНАЯ ПАНЕЛЬ СТАВОК (НИЗ) */
-        .controls-panel {
-            background: #121212; border-radius: 28px 28px 0 0;
-            padding: 20px; z-index: 10; border-top: 1px solid #222;
-        }
-
-        /* КНОПКА СТАВКИ / ЗАБРАТЬ */
-        .main-action-btn {
-            background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
-            border: none; border-radius: 16px; color: white;
-            padding: 18px; font-size: 18px; font-weight: bold;
-            width: 100%; margin-bottom: 20px; cursor: pointer;
-            text-transform: uppercase; transition: background 0.2s;
-        }
-        .btn-cashout { background: #4cd137 !important; color: #000; }
-        .btn-disabled { background: #333 !important; cursor: not-allowed; opacity: 0.6; }
-
-        /* ИНПУТЫ И БЛОКИ */
-        .input-group {
-            background: #1c1c1e; border-radius: 14px; padding: 15px;
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 15px; border: 1px solid #222;
-        }
-        .input-group input { background: transparent; border: none; color: white; font-size: 18px; width: 60px; outline: none; }
-        .input-label { color: #888; font-size: 14px; }
-
-        .quick-bets { display: flex; gap: 8px; margin-top: 5px; }
-        .q-btn {
-            background: #2c2c2e; border: none; color: white;
-            flex: 1; padding: 12px; border-radius: 12px; font-size: 14px;
-        }
-
-        /* НИЖНЕЕ МЕНЮ (TAB BAR) */
-        .tab-bar {
-            background: #000; display: flex; justify-content: space-around;
-            padding: 12px 0; border-top: 1px solid #222;
-        }
-        .tab-item { font-size: 10px; color: #555; text-align: center; }
-        .tab-item.active { color: white; }
+        .checkbox-container { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #888; }
+        .disabled-ui { opacity: 0.4; pointer-events: none; }
     </style>
 </head>
 <body>
 
-    <div class="game-screen">
-        <div class="space-glow"></div>
+    <div class="game-section">
+        <div class="multiplier-container">
+            <div class="multiplier" id="mult">1.00x</div>
+            <div class="status-text" id="status">Улетела</div>
+        </div>
+
+        <div class="wait-container" id="wait-box">
+            <div class="progress-bar"><div class="progress-fill" id="fill"></div></div>
+            <div style="font-size: 14px; color: #888;">Ожидание...</div>
+        </div>
+
+        <div class="rocket-box" id="rocket">
+            <video id="vid" loop muted playsinline><source src="13879313762885.mp4" type="video/mp4"></video>
+        </div>
+    </div>
+
+    <div class="controls-section">
+        <div class="balance-display" id="balance">100 ⭐</div>
         
-        <div class="header">
-            <div class="user-block">← Назад <span>Даниил</span></div>
-            <div class="balance-block"><span id="user-stars">1000</span> <span class="star-token">⭐</span></div>
-        </div>
-
-        <div class="history-bar">
-            <div class="hist-item">1.28x</div>
-            <div class="hist-item">1.94x</div>
-            <div class="hist-item">1.51x</div>
-            <div class="hist-item">2.60x</div>
-            <div class="hist-item" style="color: #a347ff;">3.41x</div>
-        </div>
-
-        <div class="main-display">
-            <div class="multiplier" id="crash-num">1.00x</div>
-            <div class="rocket-frame">
-                <video id="rocket-vid" autoplay loop muted playsinline>
-                    <source src="13879313762885.mp4" type="video/mp4">
-                </video>
+        <button class="main-btn" id="main-btn">СТАВКА</button>
+        
+        <div class="settings-grid" id="ui-block">
+            <div class="input-box">
+                <div class="checkbox-container">
+                    <input type="checkbox" id="auto-enabled" style="width: 20px; height: 20px;">
+                    <span>Авто-вывод:</span>
+                </div>
+                <input type="number" id="auto-val" value="2.0" step="0.1">
+                <span style="color:#a347ff">x</span>
             </div>
-            <div class="grid-floor"></div>
+            
+            <div class="input-box">
+                <span style="color:#888">Ставка:</span>
+                <input type="number" id="bet-sum" value="10">
+                <span style="color:#ffcc00">⭐</span>
+            </div>
         </div>
     </div>
 
-    <div class="controls-panel">
-        <button class="main-action-btn" id="action-btn" onclick="handleMainAction()">СТАВКА</button>
+<script>
+    let stars = 100;
+    let isFlying = false;
+    let betPlaced = false;
+    let currentX = 1.00;
+    let gameLoop;
+
+    const els = {
+        btn: document.getElementById('main-btn'),
+        mult: document.getElementById('mult'),
+        status: document.getElementById('status'),
+        rocket: document.getElementById('rocket'),
+        vid: document.getElementById('vid'),
+        wait: document.getElementById('wait-box'),
+        fill: document.getElementById('fill'),
+        ui: document.getElementById('ui-block'),
+        bal: document.getElementById('balance'),
+        betInp: document.getElementById('bet-sum'),
+        autoCheck: document.getElementById('auto-enabled'),
+        autoVal: document.getElementById('auto-val')
+    };
+
+    function initWait() {
+        isFlying = false;
+        betPlaced = false;
+        els.wait.style.display = 'block';
+        els.rocket.style.display = 'none';
+        els.mult.style.display = 'none';
+        els.status.style.display = 'none';
+        els.ui.classList.remove('disabled-ui');
         
-        <div class="input-group">
-            <span class="input-label">Авто-вывод</span>
-            <div><input type="number" id="auto-val" value="2.0" step="0.1"> <span style="color:#a347ff">x</span></div>
-        </div>
+        els.btn.innerText = 'СТАВКА';
+        els.btn.className = 'main-btn';
+        els.btn.onclick = placeBet;
 
-        <div class="input-group">
-            <span class="input-label">Ставка</span>
-            <div><input type="number" id="bet-sum" value="10"> <span class="star-token">⭐</span></div>
-        </div>
+        let progress = 0;
+        let timer = setInterval(() => {
+            progress += 2; // Ускорил ожидание до 5 секунд
+            els.fill.style.width = progress + '%';
+            if(progress >= 100) {
+                clearInterval(timer);
+                startFlight();
+            }
+        }, 100);
+    }
 
-        <div class="quick-bets">
-            <button class="q-btn" onclick="addBet(1)">+1</button>
-            <button class="q-btn" onclick="addBet(5)">+5</button>
-            <button class="q-btn" onclick="addBet(10)">+10</button>
-        </div>
-    </div>
+    function placeBet() {
+        let sum = parseInt(els.betInp.value);
+        if(sum > stars) {
+            alert("Недостаточно звезд!");
+            return;
+        }
+        stars -= sum;
+        els.bal.innerText = stars + ' ⭐';
+        betPlaced = true;
+        els.btn.innerText = 'ГОТОВО';
+        els.btn.classList.add('btn-gray');
+        els.btn.onclick = null;
+    }
 
-    <div class="tab-bar">
-        <div class="tab-item">🏆<br>Лидерборд</div>
-        <div class="tab-item active">🎮<br>Играть</div>
-        <div class="tab-item">⚡<br>Задания</div>
-        <div class="tab-item">👤<br>Профиль</div>
-    </div>
+    function startFlight() {
+        isFlying = true;
+        els.wait.style.display = 'none';
+        els.rocket.style.display = 'block';
+        els.mult.style.display = 'block';
+        els.mult.style.color = 'white';
+        els.vid.play();
+        
+        els.ui.classList.add('disabled-ui');
 
-    <script>
-        let currentBalance = 1000;
-        let isWaiting = false;
-        let isFlying = false;
-        let betPlaced = false;
-        let count = 1.00;
-        let gameTimer;
-        let targetCrash = 0;
-
-        // По умолчанию игра в фазе ожидания
-        initWaitingPhase();
-
-        function addBet(val) {
-            let input = document.getElementById('bet-sum');
-            input.value = parseInt(input.value) + val;
+        if(betPlaced) {
+            els.btn.innerText = 'ЗАБРАТЬ';
+            els.btn.className = 'main-btn btn-green';
+            els.btn.onclick = cashOut;
+        } else {
+            els.btn.innerText = 'ПОЛЕТ...';
+            els.btn.className = 'main-btn btn-gray';
+            els.btn.onclick = null;
         }
 
-        // Логика фаз: Ожидание -> Полет -> Взрыв
-        function initWaitingPhase() {
-            isWaiting = true;
-            isFlying = false;
-            betPlaced = false;
-            currentX = 1.00;
-            const btn = document.getElementById('action-btn');
-            const num = document.getElementById('crash-num');
-            
-            num.innerText = '1.00x';
-            num.style.color = 'white';
-            btn.className = 'main-action-btn'; // Обычный градиент
-            btn.innerText = 'СТАВКА (ЖДЕМ)';
-            btn.onclick = placeBet;
+        currentX = 1.00;
+        let crashPoint = 1.01 + (Math.random() * 4); // Случайный икс
 
-            // Время ожидания увеличено до 10 секунд (10000мс)
-            gameTimer = setTimeout(startFlight, 10000);
-        }
-
-        function placeBet() {
-            if (!isWaiting) return;
-            const betSum = parseInt(document.getElementById('bet-sum').value);
+        gameLoop = setInterval(() => {
+            currentX += 0.01 + (currentX * 0.008); // Ускоренный рост
+            els.mult.innerText = currentX.toFixed(2) + 'x';
             
-            if (currentBalance < betSum) {
-                alert('Недостаточно звёзд!');
-                return;
+            // Авто-вывод
+            if(betPlaced && els.autoCheck.checked) {
+                if(currentX >= parseFloat(els.autoVal.value)) cashOut();
             }
 
-            // Списываем ставку
-            currentBalance -= betSum;
-            document.getElementById('user-stars').innerText = currentBalance;
-            betPlaced = true;
-            
-            const btn = document.getElementById('action-btn');
-            btn.className = 'main-action-btn btn-disabled'; // Становится серой
-            btn.innerText = 'СТАВКА ПРИНЯТА';
-            btn.onclick = null; // Нельзя нажать еще раз
-        }
+            if(currentX >= crashPoint) boom();
+        }, 80);
+    }
 
-        function startFlight() {
-            isWaiting = false;
-            isFlying = true;
-            targetCrash = 1 + (Math.random() * 8) + (Math.random() * 2); // Генерация взрыва от 1 до 11
-            
-            const btn = document.getElementById('action-btn');
-            
-            if (betPlaced) {
-                // Если ставка была, разрешаем забирать
-                btn.className = 'main-action-btn btn-cashout';
-                btn.innerText = 'ЗАБРАТЬ';
-                btn.onclick = cashOut;
-            } else {
-                // Если ставки не было, забирать нельзя
-                btn.className = 'main-action-btn btn-disabled';
-                btn.innerText = 'ИГРА ИДЕТ';
-                btn.onclick = null;
-            }
+    function cashOut() {
+        if(!betPlaced) return;
+        let win = Math.floor(parseInt(els.betInp.value) * currentX);
+        stars += win;
+        els.bal.innerText = stars + ' ⭐';
+        betPlaced = false;
+        els.btn.innerText = 'ВЫПЛАТА';
+        els.btn.className = 'main-btn btn-gray';
+        els.btn.onclick = null;
+    }
 
-            // Запускаем рост иксов
-            gameTimer = setInterval(() => {
-                count += 0.01 + (count * 0.003); // Ускорение роста
-                document.getElementById('crash-num').innerText = count.toFixed(2) + 'x';
-                
-                // Проверка авто-вывода
-                if (betPlaced) {
-                    let autoX = parseFloat(document.getElementById('auto-val').value);
-                    if (count >= autoX) { cashOut(); }
-                }
+    function boom() {
+        clearInterval(gameLoop);
+        els.vid.pause();
+        els.mult.style.color = '#ff4d4d';
+        els.status.style.display = 'block';
+        els.btn.innerText = 'УЛЕТЕЛА';
+        els.btn.className = 'main-btn btn-gray';
+        els.btn.onclick = null;
+        setTimeout(initWait, 2500);
+    }
 
-                // Взрыв
-                if (count >= targetCrash) { boom(); }
-            }, 100);
-        }
-
-        function cashOut() {
-            if (!isFlying || !betPlaced) return;
-            clearInterval(gameTimer);
-            isFlying = false;
-
-            const betSum = parseInt(document.getElementById('bet-sum').value);
-            let win = Math.floor(betSum * count);
-            currentBalance += win;
-            document.getElementById('user-stars').innerText = currentBalance;
-            
-            alert('Вы забрали: ' + count.toFixed(2) + 'x ! Win: ' + win + ' ⭐');
-            
-            resetGameAfterRound();
-        }
-
-        function boom() {
-            clearInterval(gameTimer);
-            isFlying = false;
-            
-            const num = document.getElementById('crash-num');
-            num.style.color = '#ff4d4d'; // Краснеет
-            num.innerText = 'BOOM!';
-            
-            resetGameAfterRound();
-        }
-
-        function resetGameAfterRound() {
-            const btn = document.getElementById('action-btn');
-            btn.className = 'main-action-btn btn-disabled';
-            btn.innerText = 'УЛЕТЕЛА';
-            btn.onclick = null;
-
-            // Через 3 секунды запускаем следующий раунд
-            setTimeout(initWaitingPhase, 3000);
-        }
-    </script>
+    initWait();
+</script>
 </body>
 </html>
