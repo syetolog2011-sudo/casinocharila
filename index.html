@@ -1,178 +1,200 @@
-<div id="screen-crash" class="screen" style="padding-top: 0;">
-    <div class="crash-container">
-        <div class="nav-header" style="margin-top: 80px;">
-            <span class="close-btn" onclick="openScreen('screen-main')">✕ Выход</span>
-            <h3 style="margin:0">Crash Game</h3>
-            <div></div>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Crash Banana</title>
+    <style>
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #0d0600; font-family: 'Segoe UI', Roboto, sans-serif;
+            color: white; overflow: hidden; display: flex; flex-direction: column;
+        }
+
+        /* ГРАДИЕНТНЫЙ ФОН И СЕТКА */
+        .game-screen {
+            flex: 1; position: relative;
+            background: radial-gradient(circle at top, #4a1d7a 0%, #0d0600 70%);
+            display: flex; flex-direction: column; align-items: center;
+            perspective: 1000px;
+        }
+
+        .grid-floor {
+            position: absolute; bottom: 0; width: 200%; height: 40%;
+            background-image: 
+                linear-gradient(rgba(94, 53, 177, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(94, 53, 177, 0.3) 1px, transparent 1px);
+            background-size: 40px 40px;
+            transform: rotateX(60deg);
+            transform-origin: bottom;
+            z-index: 1;
+        }
+
+        /* ВЕРХНЯЯ ПАНЕЛЬ (ИСТОРИЯ) */
+        .history-bar {
+            display: flex; gap: 8px; padding: 15px; z-index: 10;
+            overflow-x: auto; width: 100%; justify-content: center;
+        }
+        .hist-item {
+            background: rgba(255, 255, 255, 0.1); padding: 4px 10px;
+            border-radius: 8px; font-size: 12px; color: #aaa;
+        }
+
+        /* ЦЕНТРАЛЬНАЯ ЧАСТЬ */
+        .main-display {
+            flex: 1; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; z-index: 5;
+        }
+
+        .multiplier {
+            font-size: 64px; font-weight: 800; margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 159, 67, 0.6);
+        }
+
+        .rocket-box {
+            width: 150px; height: 150px;
+            animation: bounce 2s infinite ease-in-out;
+        }
+        .rocket-box video { width: 100%; height: 100%; object-fit: contain; }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* ПАНЕЛЬ СТАВОК */
+        .bet-panel {
+            background: #1a1a1a; border-radius: 24px 24px 0 0;
+            padding: 20px; z-index: 10; display: flex; flex-direction: column; gap: 15px;
+        }
+
+        .bet-input-area {
+            background: #262626; border-radius: 12px; padding: 12px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .bet-buttons { display: flex; gap: 10px; justify-content: center; }
+        .btn-small {
+            background: #333; border: none; color: white; padding: 8px 15px;
+            border-radius: 10px; font-size: 14px; flex: 1;
+        }
+
+        .main-action-btn {
+            background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+            border: none; border-radius: 15px; color: white; 
+            padding: 16px; font-size: 18px; font-weight: bold; width: 100%;
+        }
+
+        /* НИЖНЕЕ МЕНЮ */
+        .nav-menu {
+            background: #121212; display: flex; justify-content: space-around;
+            padding: 10px 0; border-top: 1px solid #333;
+        }
+        .nav-item { font-size: 10px; color: #777; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="game-screen">
+        <div class="history-bar">
+            <div class="hist-item">1.28x</div>
+            <div class="hist-item">1.94x</div>
+            <div class="hist-item">1.51x</div>
+            <div class="hist-item">2.60x</div>
+            <div class="hist-item" style="color: #ff9f43;">3.41x</div>
         </div>
 
-        <div class="crash-main-area">
-            <div class="rocket-wrapper">
-                <video id="rocket-video" class="rocket-static" autoplay loop muted playsinline>
+        <div class="main-display">
+            <div class="multiplier" id="crash-num">1.00x</div>
+            <div class="rocket-box">
+                <video id="rocket-vid" autoplay loop muted playsinline>
                     <source src="13878839675461.mp4" type="video/mp4">
                 </video>
             </div>
-
-            <div class="crash-info">
-                <div class="multiplier-display" id="crash-mult">1.00x</div>
-            </div>
         </div>
 
-        <div class="crash-controls">
-            <div class="bet-input-group">
-                <input type="number" id="crash-bet" value="10" min="1">
-                <button class="spin-btn" id="crash-btn" onclick="startCrash()">СТАВКА</button>
-            </div>
-        </div>
+        <div class="grid-floor"></div>
     </div>
-</div>
 
-<style>
-    .crash-container {
-        width: 100%; height: 100%;
-        background: #1f0e00; /* Твой фон */
-        display: flex; flex-direction: column; align-items: center;
-    }
+    <div class="bet-panel">
+        <div class="bet-input-area">
+            <span>⭐ <span id="current-bet-val">10</span></span>
+            <span style="color: #777; font-size: 12px;">Мин. 1</span>
+        </div>
+        <div class="bet-buttons">
+            <button class="btn-small" onclick="addBet(1)">+1 ⭐</button>
+            <button class="btn-small" onclick="addBet(5)">+5 ⭐</button>
+            <button class="btn-small" onclick="addBet(10)">+10 ⭐</button>
+        </div>
+        <button class="main-action-btn" id="action-btn" onclick="toggleGame()">ОЖИДАНИЕ</button>
+    </div>
 
-    .crash-main-area {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-    }
+    <div class="nav-menu">
+        <div class="nav-item">🏆<br>Лидерборд</div>
+        <div class="nav-item" style="color: white;">🎮<br>Играть</div>
+        <div class="nav-item">⚡<br>Задания</div>
+        <div class="nav-item">👤<br>Профиль</div>
+    </div>
 
-    /* Обертка для ракеты, чтобы она стояла на месте */
-    .rocket-wrapper {
-        width: 120px;
-        height: 120px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 20px;
-    }
+    <script>
+        let isRunning = false;
+        let count = 1.00;
+        let timer;
+        let currentBet = 10;
 
-    .rocket-static {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        /* Только эффект вибрации, без перемещения */
-        animation: rocket-vibration 0.1s infinite alternate;
-        mix-blend-mode: screen;
-    }
+        function addBet(val) {
+            currentBet += val;
+            document.getElementById('current-bet-val').innerText = currentBet;
+        }
 
-    /* Эффект дрожания двигателя */
-    @keyframes rocket-vibration {
-        from { transform: translateY(0) scale(1); }
-        to { transform: translateY(-2px) scale(1.02); }
-    }
-
-    .multiplier-display {
-        font-size: 64px;
-        font-weight: 900;
-        color: #ff9f43;
-        text-shadow: 0 0 30px rgba(255, 159, 67, 0.4);
-        font-family: 'Courier New', Courier, monospace;
-    }
-
-    .crash-controls {
-        width: 100%;
-        padding-bottom: 60px;
-        display: flex;
-        justify-content: center;
-    }
-
-    .bet-input-group {
-        width: 80%;
-        display: flex;
-        gap: 10px;
-    }
-
-    #crash-bet {
-        background: #2a1500;
-        border: 1px solid #ff9f43;
-        border-radius: 12px;
-        color: white;
-        padding: 10px;
-        width: 80px;
-        font-size: 18px;
-        text-align: center;
-    }
-
-    .spin-btn {
-        flex: 1;
-        background: #ff9f43;
-        border: none;
-        border-radius: 12px;
-        color: #1f0e00;
-        font-weight: bold;
-        font-size: 18px;
-        cursor: pointer;
-    }
-</style>
-
-<script>
-    let crashActive = false;
-    let crashVal = 1.00;
-    let crashTimer;
-
-    function startCrash() {
-        if (crashActive) return;
-
-        // Проверка баланса (используем твой баланс из прошлых шагов)
-        let bet = parseInt(document.getElementById('crash-bet').value);
-        if (currentBalance < bet) return; 
-
-        currentBalance -= bet;
-        document.getElementById('user-balance').innerText = currentBalance;
-
-        crashActive = true;
-        crashVal = 1.00;
-        const btn = document.getElementById('crash-btn');
-        const display = document.getElementById('crash-mult');
-        
-        btn.innerText = 'ЗАБРАТЬ';
-        btn.style.background = '#4cd137'; // Зеленая кнопка во время полета
-        btn.onclick = cashOut;
-
-        crashTimer = setInterval(() => {
-            // Скорость роста иксов
-            crashVal += 0.01 + (crashVal * 0.002); 
-            display.innerText = crashVal.toFixed(2) + 'x';
-
-            // Шанс "краша"
-            if (Math.random() < 0.015) {
-                boom();
+        function toggleGame() {
+            if (!isRunning) {
+                start();
+            } else {
+                cashOut();
             }
-        }, 100);
-    }
+        }
 
-    function cashOut() {
-        if (!crashActive) return;
-        
-        let win = Math.floor(parseInt(document.getElementById('crash-bet').value) * crashVal);
-        currentBalance += win;
-        document.getElementById('user-balance').innerText = currentBalance;
-        
-        resetCrash('ВЫИГРЫШ!');
-    }
+        function start() {
+            isRunning = true;
+            count = 1.00;
+            const btn = document.getElementById('action-btn');
+            btn.innerText = 'ЗАБРАТЬ';
+            btn.style.background = '#4cd137';
 
-    function boom() {
-        resetCrash('BOOM!');
-        document.getElementById('crash-mult').style.color = '#ff4d4d';
-    }
+            timer = setInterval(() => {
+                count += 0.01 + (count * 0.002);
+                document.getElementById('crash-num').innerText = count.toFixed(2) + 'x';
+                
+                if (Math.random() < 0.015) {
+                    boom();
+                }
+            }, 100);
+        }
 
-    function resetCrash(msg) {
-        clearInterval(crashTimer);
-        crashActive = false;
-        const btn = document.getElementById('crash-btn');
-        btn.innerText = 'СТАВКА';
-        btn.style.background = '#ff9f43';
-        btn.onclick = startCrash;
-        
-        setTimeout(() => {
-            document.getElementById('crash-mult').style.color = '#ff9f43';
-        }, 2000);
-    }
-</script>
+        function boom() {
+            clearInterval(timer);
+            isRunning = false;
+            const num = document.getElementById('crash-num');
+            num.style.color = '#ff4d4d';
+            num.innerText = 'BOOM!';
+            
+            resetBtn();
+            setTimeout(() => { num.style.color = 'white'; num.innerText = '1.00x'; }, 2000);
+        }
+
+        function cashOut() {
+            clearInterval(timer);
+            isRunning = false;
+            alert('Вы выиграли: ' + Math.floor(currentBet * count) + ' ⭐');
+            resetBtn();
+        }
+
+        function resetBtn() {
+            const btn = document.getElementById('action-btn');
+            btn.innerText = 'ОЖИДАНИЕ';
+            btn.style.background = 'linear-gradient(90deg, #6a11cb 0%, #2575fc 100%)';
+        }
+    </script>
+</body>
+</html>
