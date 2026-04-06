@@ -1,200 +1,47 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Crash Banana</title>
-    <style>
-        body, html {
-            margin: 0; padding: 0; width: 100%; height: 100%;
-            background-color: #0d0600; font-family: 'Segoe UI', Roboto, sans-serif;
-            color: white; overflow: hidden; display: flex; flex-direction: column;
-        }
-
-        /* ГРАДИЕНТНЫЙ ФОН И СЕТКА */
-        .game-screen {
-            flex: 1; position: relative;
-            background: radial-gradient(circle at top, #4a1d7a 0%, #0d0600 70%);
-            display: flex; flex-direction: column; align-items: center;
-            perspective: 1000px;
-        }
-
-        .grid-floor {
-            position: absolute; bottom: 0; width: 200%; height: 40%;
-            background-image: 
-                linear-gradient(rgba(94, 53, 177, 0.3) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(94, 53, 177, 0.3) 1px, transparent 1px);
-            background-size: 40px 40px;
-            transform: rotateX(60deg);
-            transform-origin: bottom;
-            z-index: 1;
-        }
-
-        /* ВЕРХНЯЯ ПАНЕЛЬ (ИСТОРИЯ) */
-        .history-bar {
-            display: flex; gap: 8px; padding: 15px; z-index: 10;
-            overflow-x: auto; width: 100%; justify-content: center;
-        }
-        .hist-item {
-            background: rgba(255, 255, 255, 0.1); padding: 4px 10px;
-            border-radius: 8px; font-size: 12px; color: #aaa;
-        }
-
-        /* ЦЕНТРАЛЬНАЯ ЧАСТЬ */
-        .main-display {
-            flex: 1; display: flex; flex-direction: column; 
-            justify-content: center; align-items: center; z-index: 5;
-        }
-
-        .multiplier {
-            font-size: 64px; font-weight: 800; margin-bottom: 20px;
-            text-shadow: 0 0 20px rgba(255, 159, 67, 0.6);
-        }
-
-        .rocket-box {
-            width: 150px; height: 150px;
-            animation: bounce 2s infinite ease-in-out;
-        }
-        .rocket-box video { width: 100%; height: 100%; object-fit: contain; }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        /* ПАНЕЛЬ СТАВОК */
-        .bet-panel {
-            background: #1a1a1a; border-radius: 24px 24px 0 0;
-            padding: 20px; z-index: 10; display: flex; flex-direction: column; gap: 15px;
-        }
-
-        .bet-input-area {
-            background: #262626; border-radius: 12px; padding: 12px;
-            display: flex; align-items: center; justify-content: space-between;
-        }
-
-        .bet-buttons { display: flex; gap: 10px; justify-content: center; }
-        .btn-small {
-            background: #333; border: none; color: white; padding: 8px 15px;
-            border-radius: 10px; font-size: 14px; flex: 1;
-        }
-
-        .main-action-btn {
-            background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
-            border: none; border-radius: 15px; color: white; 
-            padding: 16px; font-size: 18px; font-weight: bold; width: 100%;
-        }
-
-        /* НИЖНЕЕ МЕНЮ */
-        .nav-menu {
-            background: #121212; display: flex; justify-content: space-around;
-            padding: 10px 0; border-top: 1px solid #333;
-        }
-        .nav-item { font-size: 10px; color: #777; text-align: center; }
-    </style>
-</head>
-<body>
-
-    <div class="game-screen">
-        <div class="history-bar">
-            <div class="hist-item">1.28x</div>
-            <div class="hist-item">1.94x</div>
-            <div class="hist-item">1.51x</div>
-            <div class="hist-item">2.60x</div>
-            <div class="hist-item" style="color: #ff9f43;">3.41x</div>
-        </div>
-
-        <div class="main-display">
-            <div class="multiplier" id="crash-num">1.00x</div>
-            <div class="rocket-box">
-                <video id="rocket-vid" autoplay loop muted playsinline>
-                    <source src="13878839675461.mp4" type="video/mp4">
-                </video>
-            </div>
-        </div>
-
-        <div class="grid-floor"></div>
+<div class="main-display">
+    <div class="multiplier" id="crash-num">1.00x</div>
+    
+    <div class="rocket-box">
+        <video id="rocket-vid" autoplay loop muted playsinline>
+            <source src="13879192062533.mp4" type="video/mp4">
+        </video>
     </div>
+</div>
 
-    <div class="bet-panel">
-        <div class="bet-input-area">
-            <span>⭐ <span id="current-bet-val">10</span></span>
-            <span style="color: #777; font-size: 12px;">Мин. 1</span>
-        </div>
-        <div class="bet-buttons">
-            <button class="btn-small" onclick="addBet(1)">+1 ⭐</button>
-            <button class="btn-small" onclick="addBet(5)">+5 ⭐</button>
-            <button class="btn-small" onclick="addBet(10)">+10 ⭐</button>
-        </div>
-        <button class="main-action-btn" id="action-btn" onclick="toggleGame()">ОЖИДАНИЕ</button>
-    </div>
+<style>
+    /* Настройки для нового видео */
+    .rocket-box {
+        width: 180px; /* Сделал чуть побольше для наглядности */
+        height: 180px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 5;
+        /* Анимация плавного парения (вверх-вниз) */
+        animation: float-animation 3s infinite ease-in-out;
+    }
 
-    <div class="nav-menu">
-        <div class="nav-item">🏆<br>Лидерборд</div>
-        <div class="nav-item" style="color: white;">🎮<br>Играть</div>
-        <div class="nav-item">⚡<br>Задания</div>
-        <div class="nav-item">👤<br>Профиль</div>
-    </div>
+    .rocket-box video {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* Чтобы видео не обрезалось */
+        /* Если у видео черный фон, эта строка его скроет */
+        mix-blend-mode: screen; 
+    }
 
-    <script>
-        let isRunning = false;
-        let count = 1.00;
-        let timer;
-        let currentBet = 10;
+    /* Эффект невесомости */
+    @keyframes float-animation {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
 
-        function addBet(val) {
-            currentBet += val;
-            document.getElementById('current-bet-val').innerText = currentBet;
-        }
-
-        function toggleGame() {
-            if (!isRunning) {
-                start();
-            } else {
-                cashOut();
-            }
-        }
-
-        function start() {
-            isRunning = true;
-            count = 1.00;
-            const btn = document.getElementById('action-btn');
-            btn.innerText = 'ЗАБРАТЬ';
-            btn.style.background = '#4cd137';
-
-            timer = setInterval(() => {
-                count += 0.01 + (count * 0.002);
-                document.getElementById('crash-num').innerText = count.toFixed(2) + 'x';
-                
-                if (Math.random() < 0.015) {
-                    boom();
-                }
-            }, 100);
-        }
-
-        function boom() {
-            clearInterval(timer);
-            isRunning = false;
-            const num = document.getElementById('crash-num');
-            num.style.color = '#ff4d4d';
-            num.innerText = 'BOOM!';
-            
-            resetBtn();
-            setTimeout(() => { num.style.color = 'white'; num.innerText = '1.00x'; }, 2000);
-        }
-
-        function cashOut() {
-            clearInterval(timer);
-            isRunning = false;
-            alert('Вы выиграли: ' + Math.floor(currentBet * count) + ' ⭐');
-            resetBtn();
-        }
-
-        function resetBtn() {
-            const btn = document.getElementById('action-btn');
-            btn.innerText = 'ОЖИДАНИЕ';
-            btn.style.background = 'linear-gradient(90deg, #6a11cb 0%, #2575fc 100%)';
-        }
-    </script>
-</body>
-</html>
+    /* Стиль икса как на скрине */
+    .multiplier {
+        font-size: 75px; 
+        font-weight: 900;
+        color: white;
+        text-shadow: 0 0 30px rgba(163, 71, 255, 0.8); /* Фиолетовое свечение */
+        margin-bottom: 10px;
+        z-index: 10;
+    }
+</style>
