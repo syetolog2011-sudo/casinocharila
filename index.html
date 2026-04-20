@@ -2,147 +2,136 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Multi-Item Case</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Casino Upgrades</title>
     <style>
-        body {
-            background-color: #0f0f0f;
-            color: white;
-            font-family: sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-        }
+        body { background: #0f0f0f; color: white; font-family: sans-serif; margin: 0; overflow: hidden; }
+        
+        /* Меню и вкладки */
+        .top-bar { padding: 15px; display: flex; justify-content: space-between; background: #1a1a1a; font-weight: bold; }
+        .balance { color: #00ff88; }
+        
+        .tab-content { display: none; height: calc(100vh - 140px); flex-direction: column; align-items: center; justify-content: center; overflow-y: auto; }
+        .tab-content.active { display: flex; }
 
-        .roulette-wrapper {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            height: 180px;
-            border: 2px solid #333;
-            background: #1a1a1a;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: inset 0 0 30px #000;
-        }
+        /* Рулетка */
+        .roulette-wrapper { position: relative; width: 100%; max-width: 500px; height: 150px; border: 2px solid #333; background: #1a1a1a; overflow: hidden; border-radius: 10px; }
+        .pointer { position: absolute; left: 50%; width: 2px; height: 100%; background: #ff004c; z-index: 5; }
+        .track { display: flex; position: absolute; transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1); top: 10px; }
+        .item-slot { min-width: 110px; height: 110px; margin: 5px; background: #222; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .item-slot img { width: 70px; }
 
-        .pointer {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 100%;
-            background: #00d2ff;
-            z-index: 10;
-            box-shadow: 0 0 15px #00d2ff;
-        }
+        /* Апгрейды */
+        .upgrade-container { width: 90%; text-align: center; }
+        .upgrade-slots { display: flex; justify-content: space-around; align-items: center; margin: 20px 0; }
+        .slot { width: 100px; height: 100px; background: #1a1a1a; border: 2px dashed #444; border-radius: 15px; display: flex; align-items: center; justify-content: center; }
+        .slot img { width: 80%; }
+        
+        .chance-text { font-size: 1.5rem; color: #00d2ff; margin: 10px 0; }
+        
+        /* Кнопки */
+        .btn { background: linear-gradient(45deg, #00d2ff, #0045ff); border: none; padding: 12px 30px; color: white; border-radius: 25px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn:disabled { background: #444; }
 
-        .roulette-track {
-            display: flex;
-            position: absolute;
-            top: 15px;
-            left: 0;
-            transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1);
-        }
-
-        .item {
-            min-width: 130px;
-            height: 130px;
-            margin: 10px;
-            background: #252525;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 4px solid #444;
-        }
-
-        .item img {
-            width: 90px;
-            height: 90px;
-            object-fit: contain;
-        }
-
-        .btn-open {
-            margin-top: 40px;
-            padding: 15px 50px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: white;
-            background: linear-gradient(45deg, #00d2ff, #0045ff);
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 5px 20px rgba(0, 210, 255, 0.3);
-        }
-
-        .btn-open:disabled {
-            filter: grayscale(1);
-            cursor: not-allowed;
-        }
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: #1a1a1a; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
+        .nav-btn { color: #888; text-align: center; cursor: pointer; font-size: 12px; }
+        .nav-btn.active { color: #00d2ff; }
     </style>
 </head>
 <body>
 
-    <div class="roulette-wrapper">
-        <div class="pointer"></div>
-        <div class="roulette-track" id="track"></div>
+    <div class="top-bar">
+        <span>Даниил</span>
+        <span class="balance">💰 <span id="user-balance">1000</span></span>
     </div>
 
-    <button class="btn-open" id="spinBtn" onclick="spin()">ОТКРЫТЬ КЕЙС</button>
+    <div id="cases-tab" class="tab-content active">
+        <div class="roulette-wrapper">
+            <div class="pointer"></div>
+            <div class="track" id="roulette-track"></div>
+        </div>
+        <button class="btn" id="spin-btn" onclick="startSpin()">ОТКРЫТЬ (100💰)</button>
+    </div>
+
+    <div id="upgrade-tab" class="tab-content">
+        <div class="upgrade-container">
+            <h3>Апгрейд предмета</h3>
+            <div class="upgrade-slots">
+                <div class="slot" id="my-item" onclick="alert('Выбери предмет в инвентаре (скоро добавим)')">
+                    <span style="font-size: 10px; color: #666;">Твой предмет</span>
+                </div>
+                <span>➡️</span>
+                <div class="slot" id="target-item">
+                    <img src="https://storage.portal-market.com/portals-market/gifts/xmasstocking/models/png/abandoned.png">
+                </div>
+            </div>
+            <div class="chance-text">Шанс: <span id="upgrade-chance">45</span>%</div>
+            <button class="btn" onclick="tryUpgrade()">УЛУЧШИТЬ</button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <div class="nav-btn active" onclick="switchTab('cases-tab', this)">🎁<br>Кейсы</div>
+        <div class="nav-btn" onclick="switchTab('upgrade-tab', this)">⚡<br>Апгрейды</div>
+    </nav>
 
     <script>
-        const track = document.getElementById('track');
-        const btn = document.getElementById('spinBtn');
-        
-        // Твои ссылки
+        let balance = 1000;
         const images = [
             "https://storage.portal-market.com/portals-market/gifts/chillflame/models/png/losangeles.png",
             "https://storage.portal-market.com/portals-market/gifts/vicecream/models/png/pumpkinspice.png",
             "https://storage.portal-market.com/portals-market/gifts/xmasstocking/models/png/abandoned.png"
         ];
-        
-        const totalItems = 60; // Длина ленты
-        const winIndex = 50;   // Какой предмет выиграет
 
-        // Заполняем ленту
-        for (let i = 0; i < totalItems; i++) {
-            const item = document.createElement('div');
-            item.className = 'item';
-            
-            // Выбираем картинку по кругу из нашего списка
-            const imgUrl = images[i % images.length];
-            
-            item.innerHTML = `<img src="${imgUrl}">`;
-            track.appendChild(item);
+        // Инициализация ленты
+        const track = document.getElementById('roulette-track');
+        for(let i=0; i<60; i++) {
+            const div = document.createElement('div');
+            div.className = 'item-slot';
+            div.innerHTML = `<img src="${images[i % 3]}">`;
+            track.appendChild(div);
         }
 
-        function spin() {
+        function switchTab(id, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
+        }
+
+        function startSpin() {
+            if (balance < 100) return alert("Недостаточно монет!");
+            balance -= 100;
+            document.getElementById('user-balance').innerText = balance;
+            
+            const btn = document.getElementById('spin-btn');
             btn.disabled = true;
             
-            const itemFullWidth = 150; // 130px + 20px margin
-            const trackCenter = 300; 
-            const finalOffset = (winIndex * itemFullWidth) - trackCenter + (itemFullWidth / 2);
-            
-            // Рандомное смещение внутри предмета, чтобы не всегда в центр
-            const randomShift = Math.floor(Math.random() * 80) - 40;
-            
-            track.style.transform = `translateX(-${finalOffset + randomShift}px)`;
+            const winIndex = 45 + Math.floor(Math.random() * 5);
+            const offset = (winIndex * 120) - 250 + 60;
+            track.style.transition = "transform 5s cubic-bezier(0.15, 0, 0.15, 1)";
+            track.style.transform = `translateX(-${offset}px)`;
 
             setTimeout(() => {
-                alert("Кейс открыт!");
-                // Сброс для теста
+                alert("Предмет получен! Теперь он доступен для апгрейда.");
+                btn.disabled = false;
                 track.style.transition = "none";
                 track.style.transform = "translateX(0)";
-                setTimeout(() => {
-                    track.style.transition = "transform 5s cubic-bezier(0.15, 0, 0.15, 1)";
-                    btn.disabled = false;
-                }, 50);
+                // Ставим выпавший предмет в ячейку апгрейда для примера
+                document.getElementById('my-item').innerHTML = `<img src="${images[winIndex % 3]}">`;
             }, 5500);
+        }
+
+        function tryUpgrade() {
+            let chance = document.getElementById('upgrade-chance').innerText;
+            if (Math.random() * 100 < chance) {
+                alert("УСПЕХ! Предмет улучшен!");
+                balance += 500; // Бонус за успех
+                document.getElementById('user-balance').innerText = balance;
+            } else {
+                alert("НЕУДАЧА... Предмет сгорел");
+                document.getElementById('my-item').innerHTML = `<span style="font-size: 10px; color: #666;">Пусто</span>`;
+            }
         }
     </script>
 </body>
