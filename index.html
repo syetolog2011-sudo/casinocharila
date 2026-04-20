@@ -3,22 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roulette Case</title>
+    <title>Multi-Item Case</title>
     <style>
         body {
-            background-color: #121212;
+            background-color: #0f0f0f;
             color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
             margin: 0;
-            overflow: hidden;
         }
 
-        /* Окно рулетки */
         .roulette-wrapper {
             position: relative;
             width: 100%;
@@ -27,11 +25,10 @@
             border: 2px solid #333;
             background: #1a1a1a;
             border-radius: 15px;
-            overflow: hidden; /* Скрываем лишние предметы */
-            box-shadow: inset 0 0 20px #000;
+            overflow: hidden;
+            box-shadow: inset 0 0 30px #000;
         }
 
-        /* Указатель (стрелочка сверху) */
         .pointer {
             position: absolute;
             top: 0;
@@ -39,19 +36,17 @@
             transform: translateX(-50%);
             width: 4px;
             height: 100%;
-            background: #ff004c;
+            background: #00d2ff;
             z-index: 10;
-            box-shadow: 0 0 15px #ff004c;
+            box-shadow: 0 0 15px #00d2ff;
         }
 
-        /* Сама лента с предметами */
         .roulette-track {
             display: flex;
             position: absolute;
             top: 15px;
             left: 0;
-            transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1); /* Плавное замедление */
-            will-change: transform;
+            transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1);
         }
 
         .item {
@@ -68,31 +63,25 @@
 
         .item img {
             width: 90px;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+            height: 90px;
+            object-fit: contain;
         }
 
-        /* Кнопка */
         .btn-open {
             margin-top: 40px;
             padding: 15px 50px;
             font-size: 1.2rem;
             font-weight: bold;
             color: white;
-            background: linear-gradient(45deg, #ff004c, #ff6b00);
+            background: linear-gradient(45deg, #00d2ff, #0045ff);
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 5px 20px rgba(255, 0, 76, 0.4);
-            transition: 0.3s;
-        }
-
-        .btn-open:active {
-            transform: scale(0.95);
+            box-shadow: 0 5px 20px rgba(0, 210, 255, 0.3);
         }
 
         .btn-open:disabled {
-            background: #444;
-            box-shadow: none;
+            filter: grayscale(1);
             cursor: not-allowed;
         }
     </style>
@@ -101,48 +90,52 @@
 
     <div class="roulette-wrapper">
         <div class="pointer"></div>
-        <div class="roulette-track" id="track">
-            </div>
+        <div class="roulette-track" id="track"></div>
     </div>
 
-    <button class="btn-open" id="spinBtn" onclick="spin()">ОТКРЫТЬ ЗА 100$</button>
+    <button class="btn-open" id="spinBtn" onclick="spin()">ОТКРЫТЬ КЕЙС</button>
 
     <script>
         const track = document.getElementById('track');
         const btn = document.getElementById('spinBtn');
-        const imgUrl = "https://storage.portal-market.com/portals-market/gifts/chillflame/models/png/losangeles.png";
         
-        // Создаем много предметов для ленты
-        const totalItems = 50;
+        // Твои ссылки
+        const images = [
+            "https://storage.portal-market.com/portals-market/gifts/chillflame/models/png/losangeles.png",
+            "https://storage.portal-market.com/portals-market/gifts/vicecream/models/png/pumpkinspice.png",
+            "https://storage.portal-market.com/portals-market/gifts/xmasstocking/models/png/abandoned.png"
+        ];
+        
+        const totalItems = 60; // Длина ленты
+        const winIndex = 50;   // Какой предмет выиграет
+
+        // Заполняем ленту
         for (let i = 0; i < totalItems; i++) {
             const item = document.createElement('div');
             item.className = 'item';
-            // Меняем цвет рамки у некоторых, типа "редкие"
-            if (i === 45) item.style.borderColor = "#00d2ff"; 
             
-            item.innerHTML = `<img src="${imgUrl}" alt="item">`;
+            // Выбираем картинку по кругу из нашего списка
+            const imgUrl = images[i % images.length];
+            
+            item.innerHTML = `<img src="${imgUrl}">`;
             track.appendChild(item);
         }
 
         function spin() {
             btn.disabled = true;
             
-            const itemWidth = 150; // Ширина предмета (130) + margin (20)
-            const winItemIndex = 45; // Какой по счету предмет выиграет
+            const itemFullWidth = 150; // 130px + 20px margin
+            const trackCenter = 300; 
+            const finalOffset = (winIndex * itemFullWidth) - trackCenter + (itemFullWidth / 2);
             
-            // Рассчитываем смещение, чтобы нужный предмет встал в центр
-            const trackCenter = 300; // Половина ширины wrapper (600/2)
-            const finalOffset = (winItemIndex * itemWidth) - trackCenter + (itemWidth / 2);
+            // Рандомное смещение внутри предмета, чтобы не всегда в центр
+            const randomShift = Math.floor(Math.random() * 80) - 40;
             
-            // Добавляем немного рандома внутри самого предмета
-            const randomInnerShift = Math.floor(Math.random() * 60) - 30;
-            
-            track.style.transform = `translateX(-${finalOffset + randomInnerShift}px)`;
+            track.style.transform = `translateX(-${finalOffset + randomShift}px)`;
 
-            // Когда анимация закончится
             setTimeout(() => {
-                alert("Поздравляем! Ты выбил L.A. Chill!");
-                // Сброс позиции для нового раза
+                alert("Кейс открыт!");
+                // Сброс для теста
                 track.style.transition = "none";
                 track.style.transform = "translateX(0)";
                 setTimeout(() => {
