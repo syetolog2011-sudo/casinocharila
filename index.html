@@ -2,136 +2,121 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Casino Upgrades</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upgrade Slider</title>
     <style>
-        body { background: #0f0f0f; color: white; font-family: sans-serif; margin: 0; overflow: hidden; }
+        body { background: #0f0f0f; color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; }
         
-        /* Меню и вкладки */
-        .top-bar { padding: 15px; display: flex; justify-content: space-between; background: #1a1a1a; font-weight: bold; }
-        .balance { color: #00ff88; }
-        
-        .tab-content { display: none; height: calc(100vh - 140px); flex-direction: column; align-items: center; justify-content: center; overflow-y: auto; }
-        .tab-content.active { display: flex; }
+        /* Стили окна выбора (Modal) */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: #1a1a1a; padding: 20px; border-radius: 15px; width: 80%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .modal-item { background: #252525; padding: 10px; border-radius: 10px; text-align: center; border: 1px solid #333; }
+        .modal-item img { width: 100%; height: auto; }
 
-        /* Рулетка */
-        .roulette-wrapper { position: relative; width: 100%; max-width: 500px; height: 150px; border: 2px solid #333; background: #1a1a1a; overflow: hidden; border-radius: 10px; }
-        .pointer { position: absolute; left: 50%; width: 2px; height: 100%; background: #ff004c; z-index: 5; }
-        .track { display: flex; position: absolute; transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1); top: 10px; }
-        .item-slot { min-width: 110px; height: 110px; margin: 5px; background: #222; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-        .item-slot img { width: 70px; }
+        /* Контейнер апгрейда */
+        .upgrade-section { width: 90%; max-width: 400px; margin-top: 50px; text-align: center; }
+        .slots-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .item-box { width: 100px; height: 100px; background: #1a1a1a; border: 2px solid #333; border-radius: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .item-box img { width: 80%; }
 
-        /* Апгрейды */
-        .upgrade-container { width: 90%; text-align: center; }
-        .upgrade-slots { display: flex; justify-content: space-around; align-items: center; margin: 20px 0; }
-        .slot { width: 100px; height: 100px; background: #1a1a1a; border: 2px dashed #444; border-radius: 15px; display: flex; align-items: center; justify-content: center; }
-        .slot img { width: 80%; }
-        
-        .chance-text { font-size: 1.5rem; color: #00d2ff; margin: 10px 0; }
-        
-        /* Кнопки */
-        .btn { background: linear-gradient(45deg, #00d2ff, #0045ff); border: none; padding: 12px 30px; color: white; border-radius: 25px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn:disabled { background: #444; }
+        /* Шкала (Hot Bar) */
+        .slider-container { position: relative; width: 100%; height: 40px; background: #333; border-radius: 20px; overflow: hidden; margin: 20px 0; border: 2px solid #444; }
+        .green-zone { height: 100%; background: linear-gradient(90deg, #00ff88, #55ffaa); transition: width 0.3s ease; width: 50%; }
+        .arrow { position: absolute; top: 0; left: 0%; width: 4px; height: 100%; background: white; box-shadow: 0 0 10px #fff; z-index: 10; transition: left 2s cubic-bezier(0.1, 0, 0.1, 1); }
 
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; height: 70px; background: #1a1a1a; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; }
-        .nav-btn { color: #888; text-align: center; cursor: pointer; font-size: 12px; }
-        .nav-btn.active { color: #00d2ff; }
+        .controls { margin-top: 20px; }
+        input[type="range"] { width: 100%; margin-bottom: 10px; }
+        .btn-upgrade { background: #00d2ff; color: #000; border: none; padding: 15px 40px; border-radius: 30px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="top-bar">
-        <span>Даниил</span>
-        <span class="balance">💰 <span id="user-balance">1000</span></span>
-    </div>
-
-    <div id="cases-tab" class="tab-content active">
-        <div class="roulette-wrapper">
-            <div class="pointer"></div>
-            <div class="track" id="roulette-track"></div>
-        </div>
-        <button class="btn" id="spin-btn" onclick="startSpin()">ОТКРЫТЬ (100💰)</button>
-    </div>
-
-    <div id="upgrade-tab" class="tab-content">
-        <div class="upgrade-container">
-            <h3>Апгрейд предмета</h3>
-            <div class="upgrade-slots">
-                <div class="slot" id="my-item" onclick="alert('Выбери предмет в инвентаре (скоро добавим)')">
-                    <span style="font-size: 10px; color: #666;">Твой предмет</span>
-                </div>
-                <span>➡️</span>
-                <div class="slot" id="target-item">
-                    <img src="https://storage.portal-market.com/portals-market/gifts/xmasstocking/models/png/abandoned.png">
-                </div>
+    <div class="upgrade-section">
+        <div class="slots-row">
+            <div class="item-box" id="slot-from" onclick="openModal('from')">
+                <span style="font-size: 10px; color: #666;">ВЫБРАТЬ</span>
             </div>
-            <div class="chance-text">Шанс: <span id="upgrade-chance">45</span>%</div>
-            <button class="btn" onclick="tryUpgrade()">УЛУЧШИТЬ</button>
+            <span style="font-size: 24px;">➡️</span>
+            <div class="item-box" id="slot-to" onclick="openModal('to')">
+                <span style="font-size: 10px; color: #666;">ВЫБРАТЬ</span>
+            </div>
+        </div>
+
+        <div class="slider-container">
+            <div class="green-zone" id="green-zone"></div>
+            <div class="arrow" id="arrow"></div>
+        </div>
+
+        <div class="controls">
+            <div id="chance-val">Шанс: 50%</div>
+            <input type="range" min="1" max="95" value="50" oninput="updateChance(this.value)">
+            <button class="btn-upgrade" onclick="startUpgrade()">UPGRADE</button>
         </div>
     </div>
 
-    <nav class="bottom-nav">
-        <div class="nav-btn active" onclick="switchTab('cases-tab', this)">🎁<br>Кейсы</div>
-        <div class="nav-btn" onclick="switchTab('upgrade-tab', this)">⚡<br>Апгрейды</div>
-    </nav>
+    <div id="itemModal" class="modal">
+        <div class="modal-content" id="modal-list"></div>
+    </div>
 
     <script>
-        let balance = 1000;
-        const images = [
+        const assets = [
             "https://storage.portal-market.com/portals-market/gifts/chillflame/models/png/losangeles.png",
             "https://storage.portal-market.com/portals-market/gifts/vicecream/models/png/pumpkinspice.png",
-            "https://storage.portal-market.com/portals-market/gifts/xmasstocking/models/png/abandoned.png"
+            "https://storage.portal-market.com/portals-market/gifts/xmasstocking/models/png/abandoned.png",
+            "https://lztcdn.com/files/c51dbff1-7e57-4ce8-ad0c-efc56255fd3a.webp" // Твоя звезда
         ];
 
-        // Инициализация ленты
-        const track = document.getElementById('roulette-track');
-        for(let i=0; i<60; i++) {
-            const div = document.createElement('div');
-            div.className = 'item-slot';
-            div.innerHTML = `<img src="${images[i % 3]}">`;
-            track.appendChild(div);
+        let currentChance = 50;
+        let activeSlot = '';
+
+        function updateChance(val) {
+            currentChance = val;
+            document.getElementById('chance-val').innerText = `Шанс: ${val}%`;
+            document.getElementById('green-zone').style.width = val + '%';
         }
 
-        function switchTab(id, el) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-            el.classList.add('active');
+        function openModal(slot) {
+            activeSlot = slot;
+            const list = document.getElementById('modal-list');
+            list.innerHTML = '';
+            assets.forEach(url => {
+                const item = document.createElement('div');
+                item.className = 'modal-item';
+                item.innerHTML = `<img src="${url}">`;
+                item.onclick = () => selectItem(url);
+                list.appendChild(item);
+            });
+            document.getElementById('itemModal').style.display = 'flex';
         }
 
-        function startSpin() {
-            if (balance < 100) return alert("Недостаточно монет!");
-            balance -= 100;
-            document.getElementById('user-balance').innerText = balance;
+        function selectItem(url) {
+            const slotId = activeSlot === 'from' ? 'slot-from' : 'slot-to';
+            document.getElementById(slotId).innerHTML = `<img src="${url}">`;
+            document.getElementById('itemModal').style.display = 'none';
+        }
+
+        function startUpgrade() {
+            const arrow = document.getElementById('arrow');
+            const btn = document.querySelector('.btn-upgrade');
             
-            const btn = document.getElementById('spin-btn');
             btn.disabled = true;
+            arrow.style.transition = 'none';
+            arrow.style.left = '0%';
             
-            const winIndex = 45 + Math.floor(Math.random() * 5);
-            const offset = (winIndex * 120) - 250 + 60;
-            track.style.transition = "transform 5s cubic-bezier(0.15, 0, 0.15, 1)";
-            track.style.transform = `translateX(-${offset}px)`;
-
             setTimeout(() => {
-                alert("Предмет получен! Теперь он доступен для апгрейда.");
-                btn.disabled = false;
-                track.style.transition = "none";
-                track.style.transform = "translateX(0)";
-                // Ставим выпавший предмет в ячейку апгрейда для примера
-                document.getElementById('my-item').innerHTML = `<img src="${images[winIndex % 3]}">`;
-            }, 5500);
-        }
+                const finalPos = Math.floor(Math.random() * 100);
+                arrow.style.transition = 'left 2s cubic-bezier(0.15, 0, 0.15, 1)';
+                arrow.style.left = finalPos + '%';
 
-        function tryUpgrade() {
-            let chance = document.getElementById('upgrade-chance').innerText;
-            if (Math.random() * 100 < chance) {
-                alert("УСПЕХ! Предмет улучшен!");
-                balance += 500; // Бонус за успех
-                document.getElementById('user-balance').innerText = balance;
-            } else {
-                alert("НЕУДАЧА... Предмет сгорел");
-                document.getElementById('my-item').innerHTML = `<span style="font-size: 10px; color: #666;">Пусто</span>`;
-            }
+                setTimeout(() => {
+                    if (finalPos <= currentChance) {
+                        alert("УСПЕХ! Предмет улучшен! 🎉");
+                    } else {
+                        alert("НЕУДАЧА... Предмет сгорел 💀");
+                    }
+                    btn.disabled = false;
+                }, 2100);
+            }, 50);
         }
     </script>
 </body>
