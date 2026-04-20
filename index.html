@@ -3,58 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Gift App Design</title>
+    <title>Gift Casino & Upgrade</title>
     <style>
-        :root { --tg-blue: #0088cc; --bg-dark: #0f0f0f; }
-        body { background: var(--bg-dark); color: white; font-family: -apple-system, sans-serif; margin: 0; overflow: hidden; }
+        :root { --tg-blue: #0088cc; --bg-dark: #121213; --card-bg: #1c1c1e; }
+        body { background: var(--bg-dark); color: white; font-family: -apple-system, sans-serif; margin: 0; overflow: hidden; user-select: none; }
 
-        /* Верхний баланс */
-        .header { padding: 15px; font-weight: bold; font-size: 20px; display: flex; align-items: center; gap: 5px; }
+        /* Шапка с балансом */
+        .header { padding: 15px; display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 20px; background: rgba(0,0,0,0.2); }
         .star-mini { width: 18px; height: 18px; }
 
-        /* Рулетка */
-        .roulette { position: relative; margin-top: 50px; height: 220px; background: rgba(255,255,255,0.02); border-y: 1px solid #222; overflow: hidden; }
-        .pointer { position: absolute; left: 50%; width: 2px; height: 100%; background: var(--tg-blue); z-index: 10; transform: translateX(-50%); box-shadow: 0 0 10px var(--tg-blue); }
-        .track { display: flex; position: absolute; top: 30px; transition: transform 5s cubic-bezier(0.1, 0, 0.1, 1); }
-        
-        .item { min-width: 140px; text-align: center; display: flex; flex-direction: column; align-items: center; }
-        .item img { width: 100px; height: 100px; object-fit: contain; }
-        
-        /* Плашка цены под предметом */
-        .price-row { 
-            background: rgba(255,255,255,0.08); 
-            padding: 4px 12px; 
-            border-radius: 20px; 
-            font-size: 14px; 
-            margin-top: 10px; 
-            display: flex; 
-            align-items: center; 
-            gap: 4px;
-            color: #ddd;
-        }
+        /* Контент вкладок */
+        .tab-content { display: none; height: calc(100vh - 120px); flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
+        .tab-content.active { display: flex; }
 
-        /* Главная кнопка */
-        .btn-main { 
-            position: fixed; bottom: 40px; left: 5%; width: 90%; 
-            padding: 16px; background: var(--tg-blue); border: none; 
-            border-radius: 50px; color: white; font-size: 18px; 
-            font-weight: bold; cursor: pointer; 
-        }
+        /* --- ЧАСТЬ 1: КЕЙСЫ --- */
+        .roulette-wrapper { position: relative; margin-top: 20px; height: 180px; width: 100%; border-top: 1px solid #333; border-bottom: 1px solid #333; overflow: hidden; }
+        .track { display: flex; position: absolute; transition: transform 5s cubic-bezier(0.1, 0, 0.1, 1); }
+        .slot { min-width: 120px; text-align: center; margin: 0 10px; display: flex; flex-direction: column; align-items: center; }
+        .slot img { width: 90px; height: 90px; object-fit: contain; }
+        .p-badge { background: rgba(255,255,255,0.08); padding: 4px 12px; border-radius: 20px; font-size: 13px; margin-top: 10px; color: #ddd; display: flex; align-items: center; gap: 4px; }
+        .pointer { position: absolute; left: 50%; height: 100%; width: 2px; background: var(--tg-blue); z-index: 10; transform: translateX(-50%); box-shadow: 0 0 10px var(--tg-blue); }
+
+        /* --- ЧАСТЬ 2: АПГРЕЙД --- */
+        .upgrade-slots { display: flex; gap: 15px; align-items: center; margin-bottom: 20px; }
+        .up-box { width: 110px; height: 110px; background: #222; border: 2px dashed #444; border-radius: 15px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .up-box img { width: 70%; height: 70%; object-fit: contain; }
+        .chance-text { font-size: 1.4rem; color: #00ff88; font-weight: bold; margin-bottom: 15px; }
+        .bar-wrap { position: relative; width: 90%; height: 40px; background: #2c2c2e; border-radius: 20px; overflow: hidden; border: 1px solid #444; }
+        .green-zone { height: 100%; background: linear-gradient(90deg, #00ff88, #55ffaa); width: 0%; }
+        .arrow { position: absolute; left: 0%; width: 4px; height: 100%; background: white; z-index: 10; transform: translateX(-50%); }
+
+        /* Кнопки и Навигация */
+        .btn-oval { padding: 16px 40px; border-radius: 50px; border: none; font-weight: bold; font-size: 17px; cursor: pointer; }
+        .btn-up { background: linear-gradient(45deg, #00d2ff, #0045ff); color: white; width: 90%; margin-top: 20px; }
+        .btn-spin { background: var(--tg-blue); color: white; width: 90%; position: absolute; bottom: 30px; }
+        .btn-oval:disabled { background: #444; color: #888; }
+
+        .nav-bar { position: fixed; bottom: 0; width: 100%; height: 70px; background: #1a1a1c; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #333; z-index: 50; }
+        .nav-tab { color: #888; text-align: center; cursor: pointer; font-size: 13px; font-weight: 500; }
+        .nav-tab.active { color: #00d2ff; }
+
+        /* Модальные окна */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 200; justify-content: center; align-items: center; animation: fade 0.3s; }
+        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+        .modal-content { background: #1a1a1e; padding: 20px; border-radius: 15px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; border: 1px solid #333; }
+        .m-item { background: #25252a; padding: 10px; border-radius: 10px; cursor: pointer; text-align: center; border: 2px solid transparent; }
+        .m-item img { width: 70px; height: 70px; object-fit: contain; }
+        .empty-text { grid-column: 1 / -1; color: #888; font-size: 13px; }
 
         /* ОКНО ВЫИГРЫША */
         #win-screen { 
             display: none; position: fixed; inset: 0; 
             background: radial-gradient(circle at center, #1a2a3a 0%, #000 100%); 
-            z-index: 100; flex-direction: column; align-items: center; justify-content: center; 
+            z-index: 150; flex-direction: column; align-items: center; justify-content: center; 
+            text-align: center; animation: fade 0.5s; 
         }
-        .win-img { width: 200px; height: 200px; transform: scale(0); animation: pop 0.5s 0.2s forwards cubic-bezier(0.17, 0.89, 0.32, 1.3); }
+        .w-img { width: 200px; height: 200px; transform: scale(0); animation: pop 0.5s 0.2s forwards cubic-bezier(0.17, 0.89, 0.32, 1.3); }
         @keyframes pop { to { transform: scale(1.1); } }
-
-        .win-title { font-size: 28px; font-weight: 800; margin-top: 20px; }
-        .win-desc { color: #aaa; margin-top: 5px; display: flex; align-items: center; gap: 5px; }
-        
-        .win-btns { width: 85%; margin-top: 50px; display: flex; flex-direction: column; gap: 10px; }
-        .btn-oval { padding: 16px; border-radius: 50px; border: none; font-weight: bold; font-size: 16px; }
+        .w-name { font-size: 28px; font-weight: bold; margin-top: 20px; text-transform: capitalize; }
+        .w-desc { color: #aaa; margin-top: 5px; display: flex; align-items: center; gap: 5px; }
+        .w-btns { width: 85%; margin-top: 50px; display: flex; flex-direction: column; gap: 10px; }
         .blue { background: var(--tg-blue); color: white; }
         .gray { background: rgba(255,255,255,0.1); color: white; }
     </style>
@@ -63,71 +71,216 @@
 
     <div class="header">
         <img src="https://lztcdn.com/files/c51dbff1-7e57-4ce8-ad0c-efc56255fd3a.webp" class="star-mini">
-        <span id="bal">25,000</span>
+        <span id="bal-text">15,000</span>
     </div>
 
-    <div class="roulette">
-        <div class="pointer"></div>
-        <div class="track" id="track"></div>
+    <div id="cases-tab" class="tab-content active">
+        <div class="roulette-wrapper">
+            <div class="pointer"></div>
+            <div class="track" id="track"></div>
+        </div>
+        <button class="btn-oval btn-spin" id="spin-btn" onclick="spin()">Открыть за 500 ⭐</button>
     </div>
 
-    <button class="btn-main" id="spin-btn" onclick="spin()">Открыть за 500 ⭐</button>
+    <div id="upgrade-tab" class="tab-content">
+        <div class="upgrade-slots">
+            <div class="up-box" id="up-from" onclick="openMenu('from')">
+                <span style="color: #666; font-size: 11px;">ТВОЙ<br>ПРЕДМЕТ</span>
+            </div>
+            <span style="font-size: 24px; color: #444;">⚡</span>
+            <div class="up-box" id="up-to" onclick="openMenu('to')">
+                <span style="color: #666; font-size: 11px;">ЦЕЛЬ</span>
+            </div>
+        </div>
+        <div class="chance-text" id="chance-display">Шанс: 0%</div>
+        <div class="bar-wrap">
+            <div class="green-zone" id="green-bar"></div>
+            <div class="arrow" id="arrow"></div>
+        </div>
+        <button class="btn-oval btn-up" id="up-btn" onclick="runUpgrade()" disabled>UPGRADE</button>
+    </div>
+
+    <nav class="nav-bar">
+        <div class="nav-tab active" onclick="switchTab('cases-tab', this)">🎁<br>Кейсы</div>
+        <div class="nav-tab" onclick="switchTab('upgrade-tab', this)">⚡<br>Апгрейд</div>
+    </nav>
+
+    <div id="modal" class="modal">
+        <div class="modal-content" id="items-grid"></div>
+    </div>
 
     <div id="win-screen">
-        <img src="" id="w-img" class="win-img">
-        <div class="win-title" id="w-name">Подарок!</div>
-        <div class="win-desc">
-            Коллекционный предмет • <span id="w-price">0</span> 
-            <img src="https://lztcdn.com/files/c51dbff1-7e57-4ce8-ad0c-efc56255fd3a.webp" style="width:14px;">
+        <img src="" id="w-img" class="w-img">
+        <div class="w-name" id="w-name"></div>
+        <div class="w-desc">
+            Worth • <span id="w-price">0</span> 
+            <img src="https://lztcdn.com/files/c51dbff1-7e57-4ce8-ad0c-efc56255fd3a.webp" class="star-mini">
         </div>
-        
-        <div class="win-btns">
-            <button class="btn-oval blue">Поделиться</button>
+        <div class="w-btns">
+            <button class="btn-oval blue btn-share">Поделиться</button>
             <button class="btn-oval gray" onclick="closeWin()">Продолжить</button>
         </div>
     </div>
 
     <script>
-        const star = "https://lztcdn.com/files/c51dbff1-7e57-4ce8-ad0c-efc56255fd3a.webp";
-        const gifts = [
-            { n: 'Los Angeles', p: 270, u: 'https://storage.portal-market.com/portals-market/gifts/chillflame/models/png/losangeles.png' },
-            { n: 'Pumpkin Spice', p: 274, u: 'https://storage.portal-market.com/portals-market/gifts/vicecream/models/png/pumpkinspice.png' },
-            { n: 'Abandoned', p: 284, u: 'https://storage.portal-market.com/portals-market/gifts/xmasstocking/models/png/abandoned.png' },
-            { n: 'Animator', p: 424, u: 'https://storage.portal-market.com/portals-market/gifts/timelessbook/models/png/animator.png' },
-            { n: 'Antique', p: 837, u: 'https://storage.portal-market.com/portals-market/gifts/jinglebells/models/png/antique.png' }
-        ];
+        const star_icon = "https://lztcdn.com/files/c51dbff1-7e57-4ce8-ad0c-efc56255fd3a.webp";
+        // ПОЛНАЯ БАЗА (Генерация имен из ссылок)
+        const gifts_base = [
+            {id:'pump',p:274,u:'https://storage.portal-market.com/portals-market/gifts/vicecream/models/png/pumpkinspice.png'},
+            {id:'stock',p:284,u:'https://storage.portal-market.com/portals-market/gifts/xmasstocking/models/png/abandoned.png'},
+            {id:'la',p:270,u:'https://storage.portal-market.com/portals-market/gifts/chillflame/models/png/losangeles.png'},
+            {id:'bells',p:837,u:'https://storage.portal-market.com/portals-market/gifts/jinglebells/models/png/antique.png'},
+            {id:'book',p:424,u:'https://storage.portal-market.com/portals-market/gifts/timelessbook/models/png/animator.png'},
+            {id:'star_w',p:5000,u:star_icon}
+        ].map(g => {
+            if(g.u === star_icon) return {...g, n: 'Premium Star'};
+            const n = g.u.split('/').pop().replace('.png', '');
+            return {...g, n};
+        });
 
         const track = document.getElementById('track');
-        for(let i=0; i<70; i++) {
-            const g = gifts[i % gifts.length];
+        let balance = 15000;
+        let inventory = []; // СКЛАД ВЫБИТЫХ ВЕЩЕЙ
+        
+        let up_from = null;
+        let up_to = null;
+        let up_chance = 0;
+
+        // Генерация рулетки (60 предметов)
+        for(let i=0; i<60; i++){
+            const g = gifts_base[i % 5]; // Исключаем звезду из кейса
             const d = document.createElement('div');
-            d.className = 'item';
-            d.innerHTML = `<img src="${g.u}"><div class="price-row">${g.p} <img src="${star}" class="star-mini"></div>`;
+            d.className = 'slot';
+            d.innerHTML = `<img src="${g.u}"><div class="p-badge">${g.p}<img src="${star_icon}" style="width:12px;"></div>`;
             track.appendChild(d);
         }
 
-        function spin() {
-            document.getElementById('spin-btn').disabled = true;
-            const idx = 50 + Math.floor(Math.random() * 10);
-            const winG = gifts[idx % gifts.length];
-            const offset = (idx * 140) - (window.innerWidth / 2) + 70;
+        // --- ЛОГИКА ВКЛАДОК ---
+        function switchTab(id, el){
+            document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
+        }
+
+        // --- ЛОГИКА КЕЙСОВ ---
+        function spin(){
+            if(balance < 500) return alert("Недостаточно звезд!");
+            balance -= 500;
+            updateBalance();
+
+            const btn = document.getElementById('spin-btn');
+            btn.disabled = true;
+
+            const win_item_idx = 45 + Math.floor(Math.random() * 5); // Где остановится (45-49)
+            const won_item = gifts_base[win_item_idx % 5];
+            const item_width = 140; // 120 + 20 margin
+            const offset = (win_item_idx * item_width) - (window.innerWidth / 2) + 60;
 
             track.style.transition = "transform 5s cubic-bezier(0.1, 0, 0.1, 1)";
             track.style.transform = `translateX(-${offset}px)`;
 
             setTimeout(() => {
-                document.getElementById('w-img').src = winG.u;
-                document.getElementById('w-name').innerText = winG.n;
-                document.getElementById('w-price').innerText = winG.p;
-                document.getElementById('win-screen').style.display = 'flex';
+                inventory.push(won_item); // СОХРАНЯЕМ НА СКЛАД
+                showWin(won_item);
             }, 5500);
         }
 
-        function closeWin() {
+        function showWin(g){
+            document.getElementById('w-img').src = g.u;
+            document.getElementById('w-name').innerText = g.n;
+            document.getElementById('w-price').innerText = g.p;
+            document.getElementById('win-screen').style.display = 'flex';
+        }
+
+        function closeWin(){
             document.getElementById('win-screen').style.display = 'none';
             document.getElementById('spin-btn').disabled = false;
             track.style.transition = "none";
             track.style.transform = "translateX(0)";
+        }
+
+        // --- ЛОГИКА АПГРЕЙДА ---
+        function openMenu(mode){
+            currentMode = mode;
+            const grid = document.getElementById('items-grid');
+            grid.innerHTML = '';
+            
+            // Если "Твой", показываем только инвентарь. Если "Цель", показываем всё.
+            const list = mode === 'from' ? inventory : gifts_base;
+            
+            if(list.length === 0 && mode === 'from'){
+                grid.innerHTML = '<div class="empty-text">Твой склад пуст.<br>Сначала открой кейс.</div>';
+            } else {
+                list.forEach(item => {
+                    const el = document.createElement('div');
+                    el.className = 'm-item';
+                    el.innerHTML = `<img src="${item.url || item.u}"><div style="color:#00ff88;font-size:12px;">${item.price || item.p} ⭐</div>`;
+                    el.onclick = () => selectItem(item);
+                    grid.appendChild(el);
+                });
+            }
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function selectItem(item){
+            const box = currentMode === 'from' ? 'up-from' : 'up-to';
+            if(currentMode === 'from') up_from = item; else up_to = item;
+            
+            document.getElementById(box).innerHTML = `<img src="${item.url || item.u}"><div style="color:#00ff88;font-size:11px;">${item.price || item.p} ⭐</div>`;
+            document.getElementById('modal').style.display = 'none';
+            calcChance();
+        }
+
+        function calcChance(){
+            if(up_from && up_to){
+                up_chance = (up_from.p / up_to.p) * 100;
+                if(up_chance > 95) up_chance = 95;
+                document.getElementById('chance-display').innerText = `Шанс: ${up_chance.toFixed(1)}%`;
+                document.getElementById('green-bar').style.width = up_chance + '%';
+                document.getElementById('up-btn').disabled = false;
+            }
+        }
+
+        function runUpgrade(){
+            const btn = document.getElementById('up-btn');
+            const arrow = document.getElementById('arrow');
+            btn.disabled = true;
+
+            const final = Math.random() * 100;
+            // Анимация 3 пролетов + остановка
+            arrow.animate([
+                { left: '0%' }, { left: '100%' }, { left: '0%' }, { left: '100%' }, { left: '0%' }, { left: final + '%' }
+            ], {
+                duration: 5500,
+                easing: 'cubic-bezier(0.1, 0, 0.1, 1)',
+                fill: 'forwards'
+            });
+
+            setTimeout(() => {
+                if(final <= up_chance){
+                    alert("УСПЕХ! Твой предмет эволюционировал! 🎉");
+                    balance += up_to.p; // Начисляем звезды (или предмет) за успех
+                } else {
+                    alert("💀 НЕУДАЧА! Предмет сгорел.");
+                    // Убираем предмет из инвентаря при проигрыше
+                    inventory = inventory.filter(i => i.u !== up_from.u);
+                }
+                updateBalance();
+                // Сброс апгрейда
+                btn.disabled = false;
+                arrow.style.left = '0%';
+                up_from = null; up_to = null;
+                document.getElementById('up-from').innerHTML = '<span style="color:#666;font-size:11px;">ТВОЙ<br>ПРЕДМЕТ</span>';
+                document.getElementById('up-to').innerHTML = '<span style="color:#666;font-size:11px;">ЦЕЛЬ</span>';
+                document.getElementById('chance-display').innerText = 'Шанс: 0%';
+                document.getElementById('green-bar').style.width = '0%';
+                document.getElementById('up-btn').disabled = true;
+            }, 5800);
+        }
+
+        function updateBalance(){
+            document.getElementById('bal-text').innerText = balance.toLocaleString();
         }
     </script>
 </body>
