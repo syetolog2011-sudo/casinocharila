@@ -3,119 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upgrade Slider</title>
+    <title>Auto-Upgrade Casino</title>
     <style>
-        body { background: #0f0f0f; color: white; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; }
+        body { background: #0b0b0b; color: white; font-family: 'Arial', sans-serif; display: flex; flex-direction: column; align-items: center; margin: 0; }
         
-        /* Стили окна выбора (Modal) */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: #1a1a1a; padding: 20px; border-radius: 15px; width: 80%; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        .modal-item { background: #252525; padding: 10px; border-radius: 10px; text-align: center; border: 1px solid #333; }
-        .modal-item img { width: 100%; height: auto; }
+        /* Модальное окно */
+        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center; }
+        .modal-content { background: #151515; padding: 20px; border-radius: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; border: 1px solid #333; }
+        .m-item { background: #222; padding: 10px; border-radius: 12px; cursor: pointer; text-align: center; border: 2px solid transparent; transition: 0.2s; }
+        .m-item:hover { border-color: #00d2ff; }
+        .m-item img { width: 80px; display: block; margin-bottom: 5px; }
+        .m-price { font-size: 12px; color: #00ff88; }
 
-        /* Контейнер апгрейда */
-        .upgrade-section { width: 90%; max-width: 400px; margin-top: 50px; text-align: center; }
-        .slots-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .item-box { width: 100px; height: 100px; background: #1a1a1a; border: 2px solid #333; border-radius: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .item-box img { width: 80%; }
+        /* Интерфейс */
+        .upgrade-card { width: 90%; max-width: 400px; margin-top: 60px; background: #111; padding: 20px; border-radius: 25px; border: 1px solid #222; text-align: center; }
+        .boxes { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .box { width: 110px; height: 110px; background: #1a1a1a; border: 2px dashed #333; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; position: relative; }
+        .box img { width: 70%; }
+        .box.active { border: 2px solid #00d2ff; background: #1a252a; }
+        .price-tag { font-size: 10px; color: #888; margin-top: 5px; }
 
-        /* Шкала (Hot Bar) */
-        .slider-container { position: relative; width: 100%; height: 40px; background: #333; border-radius: 20px; overflow: hidden; margin: 20px 0; border: 2px solid #444; }
-        .green-zone { height: 100%; background: linear-gradient(90deg, #00ff88, #55ffaa); transition: width 0.3s ease; width: 50%; }
-        .arrow { position: absolute; top: 0; left: 0%; width: 4px; height: 100%; background: white; box-shadow: 0 0 10px #fff; z-index: 10; transition: left 2s cubic-bezier(0.1, 0, 0.1, 1); }
+        /* Хот-бар (Шкала) */
+        .bar-wrap { position: relative; width: 100%; height: 45px; background: #222; border-radius: 25px; overflow: hidden; margin: 25px 0; border: 2px solid #333; }
+        .green-zone { height: 100%; background: linear-gradient(90deg, #00ff88, #00bd65); width: 0%; transition: width 0.5s ease; }
+        .arrow { position: absolute; top: 0; left: 0%; width: 5px; height: 100%; background: #fff; box-shadow: 0 0 15px #fff; z-index: 10; }
 
-        .controls { margin-top: 20px; }
-        input[type="range"] { width: 100%; margin-bottom: 10px; }
-        .btn-upgrade { background: #00d2ff; color: #000; border: none; padding: 15px 40px; border-radius: 30px; font-weight: bold; font-size: 1.1rem; cursor: pointer; }
+        .info-text { font-size: 1.2rem; margin-bottom: 15px; font-weight: bold; }
+        .btn-up { width: 100%; padding: 15px; border-radius: 15px; border: none; background: #00d2ff; color: #000; font-weight: bold; font-size: 1.1rem; cursor: pointer; box-shadow: 0 5px 15px rgba(0, 210, 255, 0.3); }
+        .btn-up:disabled { background: #444; color: #888; box-shadow: none; }
     </style>
 </head>
 <body>
 
-    <div class="upgrade-section">
-        <div class="slots-row">
-            <div class="item-box" id="slot-from" onclick="openModal('from')">
-                <span style="font-size: 10px; color: #666;">ВЫБРАТЬ</span>
+    <div class="upgrade-card">
+        <div class="boxes">
+            <div class="box" id="box-from" onclick="openMenu('from')">
+                <span style="color: #555;">ТВОЙ</span>
+                <div class="price-tag" id="price-from"></div>
             </div>
-            <span style="font-size: 24px;">➡️</span>
-            <div class="item-box" id="slot-to" onclick="openModal('to')">
-                <span style="font-size: 10px; color: #666;">ВЫБРАТЬ</span>
+            <div style="font-size: 24px; color: #444;">⚡</div>
+            <div class="box" id="box-to" onclick="openMenu('to')">
+                <span style="color: #555;">ЦЕЛЬ</span>
+                <div class="price-tag" id="price-to"></div>
             </div>
         </div>
 
-        <div class="slider-container">
-            <div class="green-zone" id="green-zone"></div>
+        <div class="info-text" id="chance-display">Шанс: 0%</div>
+
+        <div class="bar-wrap">
+            <div class="green-zone" id="green-bar"></div>
             <div class="arrow" id="arrow"></div>
         </div>
 
-        <div class="controls">
-            <div id="chance-val">Шанс: 50%</div>
-            <input type="range" min="1" max="95" value="50" oninput="updateChance(this.value)">
-            <button class="btn-upgrade" onclick="startUpgrade()">UPGRADE</button>
-        </div>
+        <button class="btn-up" id="up-btn" onclick="runUpgrade()" disabled>UPGRADE</button>
     </div>
 
-    <div id="itemModal" class="modal">
-        <div class="modal-content" id="modal-list"></div>
+    <div id="modal" class="modal">
+        <div class="modal-content" id="items-grid"></div>
     </div>
 
     <script>
-        const assets = [
-            "https://storage.portal-market.com/portals-market/gifts/chillflame/models/png/losangeles.png",
-            "https://storage.portal-market.com/portals-market/gifts/vicecream/models/png/pumpkinspice.png",
-            "https://storage.portal-market.com/portals-market/gifts/xmasstocking/models/png/abandoned.png",
-            "https://lztcdn.com/files/c51dbff1-7e57-4ce8-ad0c-efc56255fd3a.webp" // Твоя звезда
+        // БАЗА ЦЕН
+        const items = [
+            { id: 'ice', name: 'L.A. Chill', price: 100, url: 'https://storage.portal-market.com/portals-market/gifts/chillflame/models/png/losangeles.png' },
+            { id: 'pumpkin', name: 'Pumpkin', price: 500, url: 'https://storage.portal-market.com/portals-market/gifts/vicecream/models/png/pumpkinspice.png' },
+            { id: 'socks', name: 'Stocking', price: 1500, url: 'https://storage.portal-market.com/portals-market/gifts/xmasstocking/models/png/abandoned.png' },
+            { id: 'star', name: 'Star', price: 5000, url: 'https://lztcdn.com/files/c51dbff1-7e57-4ce8-ad0c-efc56255fd3a.webp' }
         ];
 
-        let currentChance = 50;
-        let activeSlot = '';
+        let selectedFrom = null;
+        let selectedTo = null;
+        let currentMode = '';
 
-        function updateChance(val) {
-            currentChance = val;
-            document.getElementById('chance-val').innerText = `Шанс: ${val}%`;
-            document.getElementById('green-zone').style.width = val + '%';
-        }
-
-        function openModal(slot) {
-            activeSlot = slot;
-            const list = document.getElementById('modal-list');
-            list.innerHTML = '';
-            assets.forEach(url => {
-                const item = document.createElement('div');
-                item.className = 'modal-item';
-                item.innerHTML = `<img src="${url}">`;
-                item.onclick = () => selectItem(url);
-                list.appendChild(item);
+        function openMenu(mode) {
+            currentMode = mode;
+            const grid = document.getElementById('items-grid');
+            grid.innerHTML = '';
+            items.forEach(item => {
+                const el = document.createElement('div');
+                el.className = 'm-item';
+                el.innerHTML = `<img src="${item.url}"><div class="m-price">${item.price}$</div>`;
+                el.onclick = () => selectItem(item);
+                grid.appendChild(el);
             });
-            document.getElementById('itemModal').style.display = 'flex';
+            document.getElementById('modal').style.display = 'flex';
         }
 
-        function selectItem(url) {
-            const slotId = activeSlot === 'from' ? 'slot-from' : 'slot-to';
-            document.getElementById(slotId).innerHTML = `<img src="${url}">`;
-            document.getElementById('itemModal').style.display = 'none';
+        function selectItem(item) {
+            if (currentMode === 'from') {
+                selectedFrom = item;
+                document.getElementById('box-from').innerHTML = `<img src="${item.url}"><div class="price-tag">${item.price}$</div>`;
+            } else {
+                selectedTo = item;
+                document.getElementById('box-to').innerHTML = `<img src="${item.url}"><div class="price-tag">${item.price}$</div>`;
+            }
+            document.getElementById('modal').style.display = 'none';
+            calculateChance();
         }
 
-        function startUpgrade() {
+        function calculateChance() {
+            if (selectedFrom && selectedTo) {
+                // Формула: цена твоего / цена цели
+                let chance = (selectedFrom.price / selectedTo.price) * 100;
+                if (chance > 95) chance = 95; // Макс шанс 95%
+                
+                document.getElementById('chance-display').innerText = `Шанс: ${chance.toFixed(1)}%`;
+                document.getElementById('green-bar').style.width = chance + '%';
+                document.getElementById('up-btn').disabled = false;
+                window.lastChance = chance;
+            }
+        }
+
+        function runUpgrade() {
+            const btn = document.getElementById('up-btn');
             const arrow = document.getElementById('arrow');
-            const btn = document.querySelector('.btn-upgrade');
-            
             btn.disabled = true;
+
+            // Анимация: сначала стрелка уходит в 0
             arrow.style.transition = 'none';
             arrow.style.left = '0%';
-            
+
+            // Запуск долгого кручения (4 секунды)
             setTimeout(() => {
-                const finalPos = Math.floor(Math.random() * 100);
-                arrow.style.transition = 'left 2s cubic-bezier(0.15, 0, 0.15, 1)';
+                const finalPos = Math.random() * 100;
+                arrow.style.transition = 'left 4s cubic-bezier(0.1, 0, 0.1, 1)'; // Плавное долгое замедление
                 arrow.style.left = finalPos + '%';
 
                 setTimeout(() => {
-                    if (finalPos <= currentChance) {
-                        alert("УСПЕХ! Предмет улучшен! 🎉");
+                    if (finalPos <= window.lastChance) {
+                        alert("🎉 УСПЕХ! Предмет " + selectedTo.name + " получен!");
                     } else {
-                        alert("НЕУДАЧА... Предмет сгорел 💀");
+                        alert("💀 НЕУДАЧА! Предмет сгорел.");
                     }
                     btn.disabled = false;
-                }, 2100);
+                }, 4200);
             }, 50);
         }
     </script>
